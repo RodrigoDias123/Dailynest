@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DailyNest — One nest for every task</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="landing-page">
+
+  <!-- ========== LEFT PANEL ========== -->
+  <div class="landing-left">
+
+    <!-- Topbar -->
+    <header class="landing-topbar">
+      <div class="logo-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span class="logo-text"><span class="bold">Daily</span><span class="light">nest</span></span>
+      </div>
+      <div class="landing-topbar-actions">
+        <a href="login.html" class="btn btn-ghost" style="border-radius:9999px; padding:7px 18px; font-size:0.875rem;">Login</a>
+        <a href="register.html" class="btn btn-primary btn-pill" style="font-size:0.875rem;">Sign up free</a>
+      </div>
+    </header>
+
+    <!-- Hero content -->
+    <div class="landing-content">
+
+      <p class="landing-eyebrow">Productivity &middot; Simplified</p>
+
+      <h1 class="landing-h1">One nest for<br/>every task.</h1>
+
+      <p class="landing-desc">
+        Tasks, agenda, notes, and files — all in one focused workspace.
+        Stop juggling apps.
+      </p>
+
+      <div class="landing-actions">
+        <a href="register.html" class="btn btn-primary btn-pill" style="font-size:1rem; padding:12px 28px;">
+          Get started &rarr;
+        </a>
+        <a href="#about" class="landing-link">See how it works</a>
+      </div>
+
+      <hr class="landing-divider" />
+
+      <!-- About section -->
+      <section id="about" class="about-section">
+        <h2>About DailyNest</h2>
+        <p>
+          DailyNest is built around a single idea: your work shouldn't be scattered
+          across a dozen different tools. We bring tasks, calendar events, notes, and
+          file storage together in one clean, distraction-free workspace.
+        </p>
+        <p>
+          Our task manager lets you create, prioritise, and track every action item —
+          whether it's a quick errand or a multi-week project. Status badges keep
+          your team aligned without lengthy status meetings.
+        </p>
+        <p>
+          The integrated agenda gives you a weekly overview of every commitment, with
+          colour-coded events that make scheduling conflicts impossible to miss.
+        </p>
+        <p>
+          The notepad is your lightweight writing space — perfect for meeting notes,
+          brainstorming sessions, or capturing fleeting ideas before they disappear.
+        </p>
+        <p>
+          Files keeps your documents exactly where you need them: associated with your
+          workspace and always a single click away. No more hunting through email
+          attachments or cloud folder hierarchies.
+        </p>
+      </section>
+
+    </div>
+    <!-- /landing-content -->
+
+  </div>
+  <!-- /LEFT PANEL -->
+
+  <!-- ========== RIGHT PANEL ========== -->
+  <div class="landing-right">
+    <div class="landing-right-overlay">
+
+      <!-- Stats badges -->
+      <div class="stats-badges">
+        <span class="stats-badge">12k+ Active users</span>
+        <span class="stats-badge">98% Uptime</span>
+        <span class="stats-badge">4.9&#9733; Avg. rating</span>
+      </div>
+
+      <!-- Bottom panel -->
+      <div class="landing-panel">
+        <div class="landing-panel-label">Tasks</div>
+        <h3>Stay ahead of everything.</h3>
+        <p>
+          Create tasks, set priorities, track statuses — all from a single, elegant
+          interface designed to keep you focused and in control.
+        </p>
+        <div class="slider-controls">
+          <div class="slider-dots">
+            <div class="slider-dot active"></div>
+            <div class="slider-dot"></div>
+            <div class="slider-dot"></div>
+          </div>
+          <button class="slider-btn" aria-label="Previous slide">&#8249;</button>
+          <button class="slider-btn" aria-label="Next slide">&#8250;</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- /RIGHT PANEL -->
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
