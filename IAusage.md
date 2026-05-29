@@ -54,3 +54,16 @@ Registo de uso de IA no desenvolvimento do projecto DailyNest.
 |---|---|
 | `frontend/index.html` | Stats restruturados de pills individuais para um card glassmorphism único com 3 colunas (12k+ / 98% / 4.9★) e separadores; slider actualizado para 5 dots; secção "About us" com título correcto e 6 parágrafos do Figma; painel inferior com texto correcto |
 | `frontend/style.css` | `.landing-right` convertido de `position:relative` para `flex-column`; adicionado `.landing-photo` com foto real (Unsplash) + `background-size:cover`; adicionados `.stats-card`, `.stats-item`, `.stats-number`, `.stats-label`, `.stats-sep`; `.landing-panel` actualizado para `background:#111` sólido sem blur |
+
+---
+
+## Fix #02 — Landing Page: responsividade sem scroll
+
+**Data:** 29 de maio de 2026  
+**Modelo:** GitHub Copilot (Claude Sonnet 4.6)
+
+### O que foi alterado
+
+| Ficheiro | Alteração |
+|---|---|
+| `frontend/style.css` | `.landing-page` e `.landing-left` passaram a `height: 100vh; overflow: hidden` — página bloqueada ao viewport sem scroll externo; `.landing-content` com `scrollbar-width: none` e `::-webkit-scrollbar { display: none }` para scroll interno invisível; espaçamentos reduzidos: `landing-content` padding `56px→32px`, `landing-h1` `3.5rem→3rem`, `landing-desc` margin `32px→20px`, `landing-actions` margin `40px→20px`, `landing-divider` margin `28px→16px`, `about-section p` padding `14px→9px`, `landing-eyebrow` margin `18px→12px`; breakpoint 768px actualizado para repor `height: auto` e `overflow: visible` em mobile |
