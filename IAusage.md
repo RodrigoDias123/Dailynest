@@ -16,7 +16,7 @@ Registo de uso de IA no desenvolvimento do projecto DailyNest.
 |---|---|
 | `frontend/style.css` | Design system completo: CSS variables, reset, sidebar, layout, botões, stat cards, tabela de tasks, modal, auth pages, landing page, notepad, agenda, responsividade |
 | `frontend/app.js` | Interactividade: modal open/close, sidebar toggle (mobile), workspace toggle, password visibility, task CRUD, filtro/pesquisa de tasks, stats automáticos, notepad word count / save / clear |
-| `frontend/index.html` | Landing page split-screen (esquerda: hero + about, direita: painel escuro com stats badges + slider) |
+| `frontend/index.html` | Landing page split-screen (esquerda: hero + about, direita: foto real Unsplash de laptop/secretária com stats card glassmorphism + painel escuro com slider de 5 dots) |
 | `frontend/login.html` | Página de login com topbar azul, card centrado, campos com ícones, toggle de password, remember me |
 | `frontend/register.html` | Página de registo com 4 campos, checkbox privacy policy, validação de passwords |
 | `frontend/tasks.html` | Página principal: sidebar, stat cards (4), tabela com search + filtros + paginação, modal Create New Task |
@@ -40,3 +40,17 @@ Registo de uso de IA no desenvolvimento do projecto DailyNest.
 - [x] Design fiel: fundo #f5f5f5, sidebar branca, botões pretos
 - [x] Font Inter carregada (Google Fonts)
 - [x] Responsivo (mobile: sidebar colapsa com toggle)
+
+---
+
+## Fix #01 — Landing Page: correcção visual para corresponder ao Figma
+
+**Data:** 29 de maio de 2026  
+**Modelo:** GitHub Copilot (Claude Sonnet 4.6)
+
+### O que foi corrigido
+
+| Ficheiro | Alteração |
+|---|---|
+| `frontend/index.html` | Stats restruturados de pills individuais para um card glassmorphism único com 3 colunas (12k+ / 98% / 4.9★) e separadores; slider actualizado para 5 dots; secção "About us" com título correcto e 6 parágrafos do Figma; painel inferior com texto correcto |
+| `frontend/style.css` | `.landing-right` convertido de `position:relative` para `flex-column`; adicionado `.landing-photo` com foto real (Unsplash) + `background-size:cover`; adicionados `.stats-card`, `.stats-item`, `.stats-number`, `.stats-label`, `.stats-sep`; `.landing-panel` actualizado para `background:#111` sólido sem blur |
