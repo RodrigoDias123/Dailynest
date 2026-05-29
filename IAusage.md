@@ -67,3 +67,18 @@ Registo de uso de IA no desenvolvimento do projecto DailyNest.
 | Ficheiro | Alteração |
 |---|---|
 | `frontend/style.css` | `.landing-page` e `.landing-left` passaram a `height: 100vh; overflow: hidden` — página bloqueada ao viewport sem scroll externo; `.landing-content` com `scrollbar-width: none` e `::-webkit-scrollbar { display: none }` para scroll interno invisível; espaçamentos reduzidos: `landing-content` padding `56px→32px`, `landing-h1` `3.5rem→3rem`, `landing-desc` margin `32px→20px`, `landing-actions` margin `40px→20px`, `landing-divider` margin `28px→16px`, `about-section p` padding `14px→9px`, `landing-eyebrow` margin `18px→12px`; breakpoint 768px actualizado para repor `height: auto` e `overflow: visible` em mobile |
+
+---
+
+## Task #02 — Tasks Page: Edit Modal + POST/PUT API Wiring
+
+**Data:** 29 de maio de 2026  
+**Modelo:** GitHub Copilot (Claude Sonnet 4.6)
+
+### O que foi criado / alterado
+
+| Ficheiro | Alteração |
+|---|---|
+| `frontend/app.js` | Adicionadas funções `apiPost`, `apiPut`, `apiDelete` com `fetch` para `http://localhost:8000`; `buildRow()` actualizado para incluir `data-id`, `data-name`, `data-due`, `data-desc` no `<tr>` e coluna de acções com botões Edit/Delete (SVG icons); adicionado estado `_editingRow` e variável `_taskIdCounter`; nova função `openNewTaskModal()` limpa estado e abre modal em modo criação; nova função `openEditModal(btn)` pré-preenche o formulário com dados da linha e abre modal em modo edição; nova função `deleteTask(btn)` com confirmação + chamada `DELETE /tasks/{id}` + remoção local; `submitCreateTask()` refactorizado para suportar os dois modos: em edição faz `PUT /tasks/{id}` e actualiza a linha localmente; em criação faz `POST /tasks` com fallback local se a API não estiver disponível |
+| `frontend/tasks.html` | Adicionado `<th>Actions</th>` na tabela; linha de exemplo actualizada com `data-id`, `data-name`, `data-due`, `data-desc` e célula de acções com botões Edit/Delete; botão "New Task" alterado para `openNewTaskModal()`; botão de submissão do modal com `id="taskSubmitBtn"` para o JS alterar o texto dinamicamente (Create Task / Save Changes) |
+| `frontend/style.css` | Adicionados estilos `td.task-actions`, `.task-actions`, `.action-btn`, `.action-btn.edit-btn:hover` (azul), `.action-btn.delete-btn:hover` (vermelho) |
