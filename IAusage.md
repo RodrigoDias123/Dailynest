@@ -82,3 +82,26 @@ Registo de uso de IA no desenvolvimento do projecto DailyNest.
 | `frontend/app.js` | Adicionadas funções `apiPost`, `apiPut`, `apiDelete` com `fetch` para `http://localhost:8000`; `buildRow()` actualizado para incluir `data-id`, `data-name`, `data-due`, `data-desc` no `<tr>` e coluna de acções com botões Edit/Delete (SVG icons); adicionado estado `_editingRow` e variável `_taskIdCounter`; nova função `openNewTaskModal()` limpa estado e abre modal em modo criação; nova função `openEditModal(btn)` pré-preenche o formulário com dados da linha e abre modal em modo edição; nova função `deleteTask(btn)` com confirmação + chamada `DELETE /tasks/{id}` + remoção local; `submitCreateTask()` refactorizado para suportar os dois modos: em edição faz `PUT /tasks/{id}` e actualiza a linha localmente; em criação faz `POST /tasks` com fallback local se a API não estiver disponível |
 | `frontend/tasks.html` | Adicionado `<th>Actions</th>` na tabela; linha de exemplo actualizada com `data-id`, `data-name`, `data-due`, `data-desc` e célula de acções com botões Edit/Delete; botão "New Task" alterado para `openNewTaskModal()`; botão de submissão do modal com `id="taskSubmitBtn"` para o JS alterar o texto dinamicamente (Create Task / Save Changes) |
 | `frontend/style.css` | Adicionados estilos `td.task-actions`, `.task-actions`, `.action-btn`, `.action-btn.edit-btn:hover` (azul), `.action-btn.delete-btn:hover` (vermelho) |
+
+---
+
+## Task #03 — Task Filters & Search
+
+**Data:** 1 de junho de 2026  
+**Modelo:** GitHub Copilot (Claude Sonnet 4.6)  
+**Sessão:** Agente autónomo
+
+### O que foi alterado
+
+| Ficheiro | Alteração |
+|---|---|
+| `frontend/tasks.html` | Select `#statusFilter` actualizado para três opções: **All / Pending / Done**; evento do search input alterado de `oninput="filterTasks()"` para `oninput="onSearchInput(this.value)"`; evento do status select alterado para `onchange="onStatusFilterChange(this.value)"` |
+| `frontend/js/modules/tasks.js` | Adicionadas variáveis de estado `filterSearch` e `filterStatus` que guardam o valor actual de cada controlo; adicionadas funções handler `onSearchInput(value)` e `onStatusFilterChange(value)` que actualizam o estado e chamam `filterTasks()`; `filterTasks()` refactorizado para ler os valores dos JS state variables em vez do DOM, e para mapear `pending` → `not-started \| in-progress` e `done` → `completed` |
+
+### Critérios cumpridos (Task #03)
+
+- [x] Filtro de status com opções: All / Pending / Done
+- [x] "Pending" filtra tarefas `not-started` e `in-progress`; "Done" filtra `completed`
+- [x] Campo de pesquisa filtra por título em tempo real (via `oninput`)
+- [x] Estado mantido em variáveis JS (`filterSearch`, `filterStatus`)
+- [x] Lógica client-side pura — sem chamadas ao servidor
