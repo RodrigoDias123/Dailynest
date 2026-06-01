@@ -105,3 +105,31 @@ Registo de uso de IA no desenvolvimento do projecto DailyNest.
 - [x] Campo de pesquisa filtra por título em tempo real (via `oninput`)
 - [x] Estado mantido em variáveis JS (`filterSearch`, `filterStatus`)
 - [x] Lógica client-side pura — sem chamadas ao servidor
+
+---
+
+## Task #04 — Task Mark Complete & Delete
+
+**Data:** 1 de junho de 2026  
+**Modelo:** GitHub Copilot (Claude Sonnet 4.6)  
+**Sessão:** Agente autónomo
+
+### O que foi alterado
+
+| Ficheiro | Alteração |
+|---|---|
+| `frontend/js/api.js` | Adicionada função `apiPatch(path, body)` que faz `PATCH` com JSON body, para suportar o endpoint `PATCH /tasks/{id}` |
+| `frontend/js/modules/tasks.js` | `buildRow()` actualizado: adicionada coluna de checkbox (`<td class="task-check-cell">`) como primeira célula de cada linha, com `checked` se o status for `completed` e atributo `onchange="markComplete(this)"`; nome da tarefa com `text-decoration:line-through` quando concluída; adicionada função `markComplete(cb)` que lê o estado do checkbox, calcula o novo status (`completed` ou `not-started`), chama `apiPatch('/tasks/{id}', {status})` (com fallback local), actualiza `data-status`, o badge de status e o estilo do nome da tarefa na linha, e chama `updateStatCards()` |
+| `frontend/tasks.html` | Adicionado `<th></th>` vazio como primeiro cabeçalho da tabela (coluna do checkbox); linha de exemplo estática actualizada com `<td class="task-check-cell"><input type="checkbox" ...></td>` como primeira célula |
+| `frontend/css/modules/tasks.css` | Adicionados estilos `td.task-check-cell` (largura 40px, centrado) e `.task-check` (16×16px, cursor pointer, `accent-color: #111`) |
+
+### Critérios cumpridos (Task #04)
+
+- [x] Checkbox na primeira coluna de cada linha da tabela
+- [x] Checkbox pré-marcado se a tarefa já tiver status `completed`
+- [x] Click no checkbox chama `PATCH /tasks/{id}` com `{status: "completed" | "not-started"}`
+- [x] Fallback local se o backend não estiver disponível
+- [x] Badge de status actualizado instantaneamente (sem reload)
+- [x] Nome da tarefa com strikethrough + cor muted quando concluída
+- [x] Botão Delete com `confirm()` nativo e chamada `DELETE /tasks/{id}` (já existia, mantido)
+- [x] `updateStatCards()` chamado após ambas as acções para reflectir os contadores
