@@ -2,24 +2,23 @@
    Agenda — Month View
    ============================================================ */
 
-/* ── Sample Events ──────────────────────────────────────── */
-const EVENTS = [
-  { id: 1, title: 'Team Meeting',    date: '2026-06-01', time: '9:00',  color: 'blue'   },
-  { id: 2, title: 'Project Review',  date: '2026-06-05', time: '10:00', color: 'yellow' },
-  { id: 3, title: 'Lunch Break',     date: '2026-06-05', time: '12:00', color: 'green'  },
-  { id: 4, title: 'Client Call',     date: '2026-06-10', time: '14:00', color: 'purple' },
-  { id: 5, title: 'Sprint Planning', date: '2026-06-15', time: '9:30',  color: 'blue'   },
-  { id: 6, title: 'Design Review',   date: '2026-06-20', time: '11:00', color: 'yellow' },
-  { id: 7, title: '1:1 Meeting',     date: '2026-06-22', time: '16:00', color: 'green'  },
-  { id: 8, title: 'Release Demo',    date: '2026-06-28', time: '15:00', color: 'purple' },
-];
+/* ── Events (populated from API) ────────────────────────── */
+var EVENTS = [];
+
+/* ── Event helpers ───────────────────────────────────────── */
+var _EVT_COLORS = ['blue', 'yellow', 'green', 'purple'];
+function evtColor(id)    { return _EVT_COLORS[(id - 1) % _EVT_COLORS.length]; }
+function evtDate(isoStr) { return isoStr ? isoStr.slice(0, 10) : ''; }
+function evtTime(isoStr) { return isoStr ? isoStr.slice(11, 16) : ''; }
 
 /* ── State ──────────────────────────────────────────────── */
-let monthViewDate = new Date();
+var monthViewDate = new Date();
 monthViewDate.setDate(1);
-let selectedDay   = null;
-let currentView   = 'week';let weekViewDate  = new Date(); // Monday of the displayed week
-let dayViewDate   = new Date(); // The displayed day
+var selectedDay   = null;
+var currentView   = 'week';
+var weekViewDate  = new Date(); // Monday of the displayed week
+var dayViewDate   = new Date(); // The displayed day
+var _editingEventId = null;
 /* ── View toggle ────────────────────────────────────────── */
 function setView(btn) {
   var parent = btn.closest('.view-toggle');
@@ -89,7 +88,7 @@ function buildMonthGrid() {
     var isToday         = cellDate.toDateString() === today.toDateString();
     var isCurrentMonth  = cellMonth === month;
     var isSelected      = selectedDay === dateStr;
-    var dayEvents       = EVENTS.filter(function (e) { return e.date === dateStr; });
+    var dayEvents       = EVENTS.filter(function (e) { return evtDate(e.start_date) === dateStr; });
 
     var cls = 'month-day-cell';
     if (!isCurrentMonth) cls += ' other-month';
@@ -97,7 +96,7 @@ function buildMonthGrid() {
     if (isSelected)      cls += ' is-selected';
 
     var dotsHtml = dayEvents.slice(0, 3).map(function (e) {
-      return '<span class="event-dot ' + e.color + '"></span>';
+      return '<span class="event-dot ' + evtColor(e.id) + '"></span>';
     }).join('');
 
     var cell = document.createElement('div');
@@ -132,20 +131,22 @@ function selectDay(dateStr, date) {
     });
   }
 
-  var dayEvents = EVENTS.filter(function (e) { return e.date === dateStr; });
+  var dayEvents = EVENTS.filter(function (e) { return evtDate(e.start_date) === dateStr; });
 
   if (listEl) {
     if (dayEvents.length === 0) {
       listEl.innerHTML = '<p class="no-events-msg">No events for this day.</p>';
     } else {
+      var solid = { blue: '#3b82f6', yellow: '#f59e0b', green: '#22c55e', purple: '#a855f7' };
       listEl.innerHTML = dayEvents.map(function (e) {
-        var solid = { blue: '#3b82f6', yellow: '#f59e0b', green: '#22c55e', purple: '#a855f7' };
+        var color = evtColor(e.id);
         return '<div class="day-event-item">' +
-          '<div class="upcoming-event-dot" style="background:' + (solid[e.color] || '#999') + ';"></div>' +
-          '<div>' +
+          '<div class="upcoming-event-dot" style="background:' + (solid[color] || '#999') + ';"></div>' +
+          '<div style="flex:1;">' +
             '<div class="upcoming-event-name">' + e.title + '</div>' +
-            '<div class="upcoming-event-time">' + e.time + '</div>' +
+            '<div class="upcoming-event-time">' + evtTime(e.start_date) + '</div>' +
           '</div>' +
+          '<button class="event-edit-btn" onclick="openEventModal(\'edit\',' + e.id + ')" title="Edit">&#9998;</button>' +
         '</div>';
       }).join('');
     }
@@ -246,12 +247,14 @@ function buildWeekView() {
         String(d.getMonth() + 1).padStart(2, '0') + '-' +
         String(d.getDate()).padStart(2, '0');
       var cellEvents = EVENTS.filter(function (e) {
-        return e.date === dateStr && parseInt(e.time.split(':')[0], 10) === h;
+        return evtDate(e.start_date) === dateStr &&
+               parseInt(evtTime(e.start_date).split(':')[0], 10) === h;
       });
       gridHtml += '<div class="day-cell">';
       cellEvents.forEach(function (e) {
-        gridHtml += '<div class="calendar-event ' + e.color + '">' +
-          e.title + '<br/>' + e.time + '</div>';
+        gridHtml += '<div class="calendar-event ' + evtColor(e.id) + '" ' +
+          'onclick="openEventModal(\'edit\',' + e.id + ')" style="cursor:pointer;">' +
+          e.title + '<br/>' + evtTime(e.start_date) + '</div>';
       });
       gridHtml += '</div>';
     });
@@ -275,9 +278,9 @@ function buildDayView() {
   var listEl = document.getElementById('day-view-list');
   if (!listEl) return;
 
-  var dayEvents = EVENTS.filter(function (e) { return e.date === dateStr; });
+  var dayEvents = EVENTS.filter(function (e) { return evtDate(e.start_date) === dateStr; });
   dayEvents.sort(function (a, b) {
-    return parseInt(a.time.split(':')[0], 10) - parseInt(b.time.split(':')[0], 10);
+    return evtTime(a.start_date).localeCompare(evtTime(b.start_date));
   });
 
   if (dayEvents.length === 0) {
@@ -286,9 +289,9 @@ function buildDayView() {
   }
 
   listEl.innerHTML = dayEvents.map(function (e) {
-    return '<div class="day-view-event">' +
-      '<div class="day-view-event-time">' + e.time + '</div>' +
-      '<div class="day-view-event-body calendar-event ' + e.color + '">' +
+    return '<div class="day-view-event" onclick="openEventModal(\'edit\',' + e.id + ')" style="cursor:pointer;">' +
+      '<div class="day-view-event-time">' + evtTime(e.start_date) + '</div>' +
+      '<div class="day-view-event-body calendar-event ' + evtColor(e.id) + '">' +
         '<div class="day-view-event-title">' + e.title + '</div>' +
       '</div>' +
     '</div>';
@@ -324,6 +327,158 @@ function nextPeriod() {
   updateDateRangeLabel();
 }
 
+/* ── Rebuild current visible view ────────────────────────── */
+function rebuildViews() {
+  if (currentView === 'week')       buildWeekView();
+  else if (currentView === 'day')   buildDayView();
+  else                              buildMonthGrid();
+}
+
+/* ── Load events from API (with fallback sample data) ────── */
+function loadEvents() {
+  apiGet('/events').then(function (data) {
+    EVENTS = data;
+    rebuildViews();
+    renderUpcomingPanel();
+  }).catch(function () {
+    // Fallback when the backend is not running
+    EVENTS = [
+      { id: 1, title: 'Team Meeting',    start_date: '2026-06-01T09:00:00', end_date: '2026-06-01T10:00:00', description: '' },
+      { id: 2, title: 'Project Review',  start_date: '2026-06-05T10:00:00', end_date: '2026-06-05T11:00:00', description: '' },
+      { id: 3, title: 'Lunch Break',     start_date: '2026-06-05T12:00:00', end_date: '2026-06-05T13:00:00', description: '' },
+      { id: 4, title: 'Client Call',     start_date: '2026-06-10T14:00:00', end_date: '2026-06-10T15:00:00', description: '' },
+      { id: 5, title: 'Sprint Planning', start_date: '2026-06-15T09:30:00', end_date: '2026-06-15T10:30:00', description: '' },
+      { id: 6, title: 'Design Review',   start_date: '2026-06-20T11:00:00', end_date: '2026-06-20T12:00:00', description: '' },
+      { id: 7, title: '1:1 Meeting',     start_date: '2026-06-22T16:00:00', end_date: '2026-06-22T17:00:00', description: '' },
+      { id: 8, title: 'Release Demo',    start_date: '2026-06-28T15:00:00', end_date: '2026-06-28T16:00:00', description: '' },
+    ];
+    rebuildViews();
+    renderUpcomingPanel();
+  });
+}
+
+/* ── Open / close event modal ────────────────────────────── */
+function openEventModal(mode, eventId) {
+  _editingEventId = null;
+  var titleEl  = document.getElementById('eventModalTitle');
+  var submitEl = document.getElementById('eventSubmitBtn');
+  var form     = document.getElementById('eventForm');
+  if (form) form.reset();
+
+  if (mode === 'edit' && eventId != null) {
+    var ev = EVENTS.filter(function (e) { return e.id === eventId; })[0];
+    if (!ev) return;
+    _editingEventId = eventId;
+    if (titleEl)  titleEl.textContent  = 'Edit Event';
+    if (submitEl) submitEl.textContent = 'Save Changes';
+    var titleInput = document.getElementById('eventTitle');
+    var descInput  = document.getElementById('eventDescription');
+    var startInput = document.getElementById('eventStartDate');
+    var endInput   = document.getElementById('eventEndDate');
+    if (titleInput) titleInput.value = ev.title        || '';
+    if (descInput)  descInput.value  = ev.description  || '';
+    if (startInput) startInput.value = ev.start_date ? ev.start_date.slice(0, 16) : '';
+    if (endInput)   endInput.value   = ev.end_date   ? ev.end_date.slice(0, 16)   : '';
+  } else {
+    if (titleEl)  titleEl.textContent  = 'New Event';
+    if (submitEl) submitEl.textContent = 'Create Event';
+  }
+  openModal('createEvent');
+}
+
+function closeEventModal() {
+  closeModal('createEvent');
+}
+
+/* ── Submit event form (create or edit) ──────────────────── */
+function submitEventForm(e) {
+  e.preventDefault();
+  var title     = (document.getElementById('eventTitle')       || {}).value || '';
+  var desc      = (document.getElementById('eventDescription') || {}).value || '';
+  var startDate = (document.getElementById('eventStartDate')   || {}).value || '';
+  var endDate   = (document.getElementById('eventEndDate')     || {}).value || '';
+
+  if (!title || !startDate || !endDate) return;
+
+  var payload = { title: title, description: desc, start_date: startDate, end_date: endDate };
+
+  function applyLocal(updated) {
+    closeEventModal();
+    rebuildViews();
+    renderUpcomingPanel();
+    if (selectedDay) {
+      var panel = document.getElementById('day-events-panel');
+      if (panel && panel.style.display !== 'none') selectDay(selectedDay, new Date(selectedDay));
+    }
+  }
+
+  if (_editingEventId != null) {
+    apiPut('/events/' + _editingEventId, payload)
+      .then(function (updated) {
+        for (var i = 0; i < EVENTS.length; i++) {
+          if (EVENTS[i].id === _editingEventId) { EVENTS[i] = updated; break; }
+        }
+        applyLocal();
+      })
+      .catch(function () {
+        for (var i = 0; i < EVENTS.length; i++) {
+          if (EVENTS[i].id === _editingEventId) {
+            EVENTS[i].title       = title;
+            EVENTS[i].description = desc;
+            EVENTS[i].start_date  = startDate;
+            EVENTS[i].end_date    = endDate;
+            break;
+          }
+        }
+        applyLocal();
+      });
+  } else {
+    apiPost('/events', payload)
+      .then(function (created) {
+        EVENTS.push(created);
+        applyLocal();
+      })
+      .catch(function () {
+        var newId = EVENTS.reduce(function (max, ev) { return Math.max(max, ev.id || 0); }, 0) + 1;
+        EVENTS.push({ id: newId, title: title, description: desc, start_date: startDate, end_date: endDate });
+        applyLocal();
+      });
+  }
+}
+
+/* ── Render upcoming panel (sorted by start_date) ────────── */
+function renderUpcomingPanel() {
+  var listEl = document.getElementById('upcoming-list');
+  if (!listEl) return;
+
+  var now = new Date();
+  var solid = { blue: '#3b82f6', yellow: '#f59e0b', green: '#22c55e', purple: '#a855f7' };
+
+  var upcoming = EVENTS
+    .filter(function (e) { return e.start_date && new Date(e.start_date) >= now; })
+    .sort(function (a, b) { return new Date(a.start_date) - new Date(b.start_date); })
+    .slice(0, 5);
+
+  if (upcoming.length === 0) {
+    listEl.innerHTML = '<p class="no-events-msg">No upcoming events.</p>';
+    return;
+  }
+
+  listEl.innerHTML = upcoming.map(function (e) {
+    var color = evtColor(e.id);
+    var d     = new Date(e.start_date);
+    var label = d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' }) +
+                ' \u00b7 ' + evtTime(e.start_date);
+    return '<div class="upcoming-event">' +
+      '<div class="upcoming-event-dot" style="background:' + (solid[color] || '#999') + ';"></div>' +
+      '<div>' +
+        '<div class="upcoming-event-name">' + e.title + '</div>' +
+        '<div class="upcoming-event-time">' + label + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
 /* ── Initialise ─────────────────────────────────────────── */
 (function init() {
   var now = new Date();
@@ -339,4 +494,5 @@ function nextPeriod() {
 
   buildWeekView();
   updateDateRangeLabel();
+  loadEvents();
 }());

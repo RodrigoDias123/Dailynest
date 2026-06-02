@@ -399,3 +399,26 @@
   font-weight: 500;
 }
 
+/* ── Event modal: textarea ── */
+.form-textarea {
+  resize: vertical;
+  min-height: 72px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+/* ── Event edit button (inside day-event-item) ── */
+.event-edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  align-self: center;
+  transition: color 0.12s;
+}
+.event-edit-btn:hover { color: var(--color-brand); }
+
