@@ -35,19 +35,32 @@ function setView(btn) {
   var upcomingPanel = document.getElementById('upcoming-panel');
   var dayEvtPanel   = document.getElementById('day-events-panel');
 
+  var dayView = document.getElementById('day-view');
+
   if (view === 'month') {
     if (weekView)      weekView.style.display      = 'none';
+    if (dayView)       dayView.style.display       = 'none';
     if (monthView)     monthView.style.display     = '';
     if (miniCalPanel)  miniCalPanel.style.display  = 'none';
     if (upcomingPanel) upcomingPanel.style.display = 'none';
     if (dayEvtPanel)   dayEvtPanel.style.display   = '';
     buildMonthGrid();
-  } else {
-    if (weekView)      weekView.style.display      = '';
+  } else if (view === 'day') {
+    if (weekView)      weekView.style.display      = 'none';
+    if (dayView)       dayView.style.display       = '';
     if (monthView)     monthView.style.display     = 'none';
     if (miniCalPanel)  miniCalPanel.style.display  = '';
     if (upcomingPanel) upcomingPanel.style.display = '';
     if (dayEvtPanel)   dayEvtPanel.style.display   = 'none';
+    buildDayView();
+  } else {
+    if (weekView)      weekView.style.display      = '';
+    if (dayView)       dayView.style.display       = 'none';
+    if (monthView)     monthView.style.display     = 'none';
+    if (miniCalPanel)  miniCalPanel.style.display  = '';
+    if (upcomingPanel) upcomingPanel.style.display = '';
+    if (dayEvtPanel)   dayEvtPanel.style.display   = 'none';
+    buildWeekView();
   }
 }
 
@@ -400,49 +413,46 @@ function submitEventForm(e) {
 
   if (!title || !startDate || !endDate) return;
 
-  var payload = { title: title, description: desc, start_date: startDate, end_date: endDate };
-
-  function applyLocal(updated) {
-    closeEventModal();
-    rebuildViews();
-    renderUpcomingPanel();
-    if (selectedDay) {
-      var panel = document.getElementById('day-events-panel');
-      if (panel && panel.style.display !== 'none') selectDay(selectedDay, new Date(selectedDay));
+  // ── Apply locally first (synchronous) ──────────────────
+  if (_editingEventId != null) {
+    for (var i = 0; i < EVENTS.length; i++) {
+      if (EVENTS[i].id === _editingEventId) {
+        EVENTS[i].title       = title;
+        EVENTS[i].description = desc;
+        EVENTS[i].start_date  = startDate;
+        EVENTS[i].end_date    = endDate;
+        break;
+      }
     }
+  } else {
+    var newId = EVENTS.reduce(function (max, ev) { return Math.max(max, ev.id || 0); }, 0) + 1;
+    EVENTS.push({ id: newId, title: title, description: desc, start_date: startDate, end_date: endDate });
   }
 
+  closeEventModal();
+  rebuildViews();
+  renderUpcomingPanel();
+  if (selectedDay) {
+    var panel = document.getElementById('day-events-panel');
+    if (panel && panel.style.display !== 'none') selectDay(selectedDay, new Date(selectedDay));
+  }
+
+  // ── Sync to API in background ───────────────────────────
+  var payload = { title: title, description: desc, start_date: startDate, end_date: endDate };
   if (_editingEventId != null) {
-    apiPut('/events/' + _editingEventId, payload)
-      .then(function (updated) {
-        for (var i = 0; i < EVENTS.length; i++) {
-          if (EVENTS[i].id === _editingEventId) { EVENTS[i] = updated; break; }
-        }
-        applyLocal();
-      })
-      .catch(function () {
-        for (var i = 0; i < EVENTS.length; i++) {
-          if (EVENTS[i].id === _editingEventId) {
-            EVENTS[i].title       = title;
-            EVENTS[i].description = desc;
-            EVENTS[i].start_date  = startDate;
-            EVENTS[i].end_date    = endDate;
-            break;
-          }
-        }
-        applyLocal();
-      });
+    apiPut('/events/' + _editingEventId, payload).catch(function () {});
   } else {
     apiPost('/events', payload)
       .then(function (created) {
-        EVENTS.push(created);
-        applyLocal();
+        // Replace the locally-created event with the server response (gets real id)
+        if (created && created.id) {
+          var localId = EVENTS[EVENTS.length - 1].id;
+          for (var j = 0; j < EVENTS.length; j++) {
+            if (EVENTS[j].id === localId) { EVENTS[j] = created; break; }
+          }
+        }
       })
-      .catch(function () {
-        var newId = EVENTS.reduce(function (max, ev) { return Math.max(max, ev.id || 0); }, 0) + 1;
-        EVENTS.push({ id: newId, title: title, description: desc, start_date: startDate, end_date: endDate });
-        applyLocal();
-      });
+      .catch(function () {});
   }
 }
 

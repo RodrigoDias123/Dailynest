@@ -226,3 +226,25 @@ Registo de uso de IA no desenvolvimento do projecto DailyNest.
 - [x] `loadEvents()` chamado no arranque: tenta `GET /events`; em falha usa dados de exemplo no novo formato
 - [x] Todas as vistas (Week, Day, Month) actualizadas para usar o novo modelo de dados com `start_date`/`end_date`
 
+---
+
+## Fix #03 — Agenda: api.js em falta + criação de evento + Day View
+
+**Data:** 2 de junho de 2026  
+**Modelo:** GitHub Copilot (Claude Sonnet 4.6)
+
+### O que foi corrigido
+
+| Ficheiro | Alteração |
+|---|---|
+| `frontend/agenda.html` | Adicionado `<script src="js/api.js"></script>` antes dos outros scripts — estava em falta, tornando `apiPost`/`apiGet` indefinidos e impedindo qualquer operação de eventos |
+| `frontend/js/modules/agenda.js` | `submitEventForm()` reescrito com lógica **síncrona-primeiro**: o evento é adicionado/editado em `EVENTS` imediatamente, o modal fecha e as vistas reconstroem-se antes de qualquer chamada à API; a chamada à API corre em background (fire-and-forget) sem bloquear a UI |
+| `frontend/js/modules/agenda.js` | `setView()` corrigido: o ramo `else` tratava "day" e "week" de forma idêntica, mostrando sempre `#week-view` e nunca chamando `buildDayView()`; substituído por três ramos explícitos (`month` / `day` / `week`) cada um com o seu show/hide correcto e chamada à função de build correspondente |
+
+### Bugs corrigidos
+
+- [x] Criação de evento não funcionava — `api.js` não estava carregado em `agenda.html`
+- [x] Fallback local também não corria — o erro era síncrono, antes do `.catch()`
+- [x] `submitEventForm()` agora aplica a mudança localmente de forma imediata (sem depender de callbacks assíncronos)
+- [x] Day View mostrava o mesmo conteúdo que a Week View — `setView()` nunca activava `#day-view` nem chamava `buildDayView()`
+
