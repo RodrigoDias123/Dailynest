@@ -1,0 +1,81 @@
+/* ============================================================
+   DailyNest — Design System
+   style.css
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ============================================================
+   CSS Variables
+   ============================================================ */
+:root {
+  /* Brand */
+  --color-brand:        #1a1a1a;
+  --color-brand-text:   #ffffff;
+
+  /* Backgrounds */
+  --color-bg:           #f5f5f5;
+  --color-surface:      #ffffff;
+  --color-surface-alt:  #f8f8f8;
+
+  /* Borders */
+  --color-border:       #e5e5e5;
+  --color-border-light: #eeeeee;
+
+  /* Text */
+  --color-text:           #1a1a1a;
+  --color-text-secondary: #6b7280;
+  --color-text-muted:     #9ca3af;
+
+  /* Nav / Sidebar */
+  --color-nav-active-bg:   #1a1a1a;
+  --color-nav-active-text: #ffffff;
+  --color-nav-idle-text:   #374151;
+
+  /* Accent — topbar login/register */
+  --color-topbar-accent: #3b82f6;
+
+  /* Status colors */
+  --status-not-started-bg:   #f3f4f6;
+  --status-not-started-text: #6b7280;
+  --status-not-started-dot:  #9ca3af;
+
+  --status-in-progress-bg:   #fff7ed;
+  --status-in-progress-text: #ea580c;
+  --status-in-progress-dot:  #f97316;
+
+  --status-completed-bg:   #f0fdf4;
+  --status-completed-text: #16a34a;
+  --status-completed-dot:  #22c55e;
+
+  /* Stat card icon colours */
+  --icon-all-tasks:   #3b82f6;
+  --icon-not-started: #6b7280;
+  --icon-in-progress: #f97316;
+  --icon-completed:   #22c55e;
+
+  /* Agenda event colours */
+  --event-blue:   #dbeafe;
+  --event-yellow: #fef9c3;
+  --event-green:  #dcfce7;
+  --event-purple: #ede9fe;
+
+  /* Layout */
+  --sidebar-width:  284px;
+  --topbar-height:  72px;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Border radius */
+  --radius-sm:   6px;
+  --radius:      10px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-card:  0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-modal: 0 20px 60px rgba(0,0,0,0.15);
+}
+
