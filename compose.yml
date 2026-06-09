@@ -32,11 +32,18 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    networks:
+      default: null
     ports:
-      - "8080:80"
+      - mode: ingress
+        target: 80
+        published: "5050"
+        protocol: tcp
     volumes:
-      - pgadmin_data:/var/lib/pgadmin
-
+      - type: volume
+        source: pgadmin_data
+        target: /var/lib/pgadmin
+        volume: {}
 
 volumes:
   postgres_data:
