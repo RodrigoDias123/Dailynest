@@ -111,6 +111,19 @@ function renderNoteList() {
   };
 }
 
+/* ── Mobile panel switching ──────────────────────────────── */
+
+function mobileBackToList() {
+  var layout = document.querySelector('.notepad-layout');
+  if (layout) layout.classList.remove('mobile-editor-open');
+}
+
+function _mobileOpenEditor() {
+  if (window.innerWidth > 700) return;
+  var layout = document.querySelector('.notepad-layout');
+  if (layout) layout.classList.add('mobile-editor-open');
+}
+
 /* ── Select a note ───────────────────────────────────────── */
 
 function selectNote(id) {
@@ -132,6 +145,7 @@ function selectNote(id) {
   if (bodyEl)  bodyEl.value  = note.body  || '';
 
   showEditor(true);
+  _mobileOpenEditor();
   setSaveStatus('saved');
   renderNoteList(); // re-render to update active state
   updateWordCount(); // call after render so DOM is settled
@@ -211,6 +225,7 @@ function newNote() {
   setSaveStatus('unsaved');
   var titleEl = npGet('noteTitle');
   if (titleEl) titleEl.focus();
+  _mobileOpenEditor();
 }
 
 /* ── Persist a pending-new note to the backend ───────────── */
@@ -285,6 +300,7 @@ function deleteNote() {
   _isDirty = false;
 
   showEditor(false);
+  mobileBackToList();
   renderNoteList();
   var counter = npGet('notesCount');
   if (counter) counter.textContent = NOTES.length;

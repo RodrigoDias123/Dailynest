@@ -211,9 +211,42 @@
 }
 .note-body-input::placeholder { color: var(--color-text-muted); }
 
+/* Back-to-list button — hidden on desktop, shown on mobile */
+.mobile-back-btn { display: none; }
+
 /* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 700px) {
-  .notepad-layout { flex-direction: column; }
-  .notes-list-panel { width: 100%; max-width: 100%; border-right: none; border-bottom: 1px solid var(--color-border); max-height: 220px; }
+  .notepad-layout {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* Default: show only the note list */
+  .notes-list-panel {
+    width: 100%;
+    max-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    max-height: none;
+    flex: 1;
+  }
+
+  .notes-editor-panel { display: none; }
+
+  /* When a note is open on mobile: show only the editor */
+  .notepad-layout.mobile-editor-open .notes-list-panel { display: none; }
+  .notepad-layout.mobile-editor-open .notes-editor-panel {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Reveal back button inside editor toolbar */
+  .mobile-back-btn { display: inline-flex; }
+
+  /* Tighter editor padding on small screens */
+  .note-title-input { font-size: 1.375rem; padding: 16px 18px 10px; }
+  .note-divider     { margin: 0 18px; }
+  .note-body-input  { padding: 14px 18px 24px; }
 }
 

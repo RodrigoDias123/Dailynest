@@ -407,6 +407,37 @@
   line-height: 1.5;
 }
 
+/* ── Mobile responsiveness ──────────────────────────────── */
+@media (max-width: 768px) {
+  /* Toolbar */
+  .agenda-toolbar-left h1 { font-size: 1.5rem; }
+  .view-toggle button { padding: 7px 12px; font-size: 0.8125rem; }
+
+  /* Stack mini-calendar below main calendar.
+     minmax(0,1fr) prevents the grid column from expanding beyond the viewport. */
+  .agenda-layout { grid-template-columns: minmax(0, 1fr); }
+
+  /* Calendar wrapper scrolls horizontally; min-width:0 forces it
+     to respect the grid column width instead of growing with its content. */
+  .calendar-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    min-width: 0;
+  }
+
+  /* Give week columns a fixed minimum so the calendar stays usable when scrolled */
+  .week-header,
+  .week-grid { min-width: 560px; }
+
+  /* Month view: smaller cells */
+  .month-day-cell { min-height: 56px; padding: 4px; }
+  .month-day-num  { width: 22px; height: 22px; font-size: 0.75rem; }
+
+  /* Mini-calendar goes side by side when space allows */
+  .mini-calendar { flex-direction: row; flex-wrap: wrap; gap: 12px; }
+  .mini-cal-card { flex: 1; min-width: 220px; }
+}
+
 /* ── Event edit button (inside day-event-item) ── */
 .event-edit-btn {
   background: none;

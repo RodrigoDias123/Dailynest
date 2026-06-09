@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Files — DailyNest</title>
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/modules/files.css" />
+</head>
+<body>
+
+<!-- Mobile top bar -->
+<header class="mobile-topbar">
+  <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Abrir menu">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6"  x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+  <div class="mobile-topbar-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+    <span class="logo-text"><span class="bold">Daily</span><span class="light">nest</span></span>
+  </div>
+</header>
+
+<div class="app-layout">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-logo">
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span class="logo-text"><span class="bold">Daily</span><span class="light">nest</span></span>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Workspace</div>
+      <div class="workspace-toggle">
+        <button class="pill active" onclick="toggleWorkspace(this)">Work</button>
+        <button class="pill" onclick="toggleWorkspace(this)">Personal</button>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <nav class="sidebar-nav">
+
+        <a href="tasks.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          Tasks
+        </a>
+
+        <a href="agenda.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8"  y1="2" x2="8"  y2="6"/>
+            <line x1="3"  y1="10" x2="21" y2="10"/>
+          </svg>
+          Agenda
+        </a>
+
+        <a href="notepad.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Notepad
+        </a>
+
+        <a href="files.html" class="nav-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+          </svg>
+          Files
+          <span class="nav-badge" id="navBadge">0</span>
+        </a>
+
+      </nav>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar-circle">RD</div>
+      <div>
+        <div class="sidebar-user-name">Rodrigo Dias</div>
+        <div class="sidebar-user-email">rodrigoDias@gmail.com</div>
+      </div>
+    </div>
+
+  </aside>
+  <!-- /SIDEBAR -->
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main class="main-content files-main">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <h1>Files</h1>
+        <p class="subtitle">Manage your documents and folders</p>
+      </div>
+      <div class="page-header-actions">
+        <button class="btn btn-primary" onclick="openUploadModal()">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          New
+        </button>
+      </div>
+    </div>
+
+    <!-- Files body: list + new panel -->
+    <div class="files-body">
+
+      <!-- LEFT: File list area -->
+      <div class="files-content">
+
+        <!-- Toolbar: search + view toggle -->
+        <div class="files-toolbar">
+          <div class="files-search-wrap">
+            <svg class="files-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="text"
+              class="files-search-input"
+              id="searchInput"
+              placeholder="Search files..."
+              oninput="filterFiles()"
+            />
+          </div>
+          <div class="view-toggle">
+            <button class="view-btn active" id="listViewBtn" onclick="setView('list')" title="List view">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"/>
+                <line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                <line x1="3" y1="18" x2="3.01" y2="18"/>
+              </svg>
+            </button>
+            <button class="view-btn" id="gridViewBtn" onclick="setView('grid')" title="Grid view">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="files-breadcrumb">
+          <a href="#" class="breadcrumb-item" onclick="navigateTo('root')">All Files</a>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+          <span class="breadcrumb-item active" id="breadcrumbCurrent">My Files</span>
+        </div>
+
+        <!-- File list (list view) -->
+        <div class="files-table-wrap" id="listView">
+          <table class="files-table">
+            <thead>
+              <tr>
+                <th class="col-name">Name</th>
+                <th class="col-modified">Modified</th>
+                <th class="col-size">Size</th>
+                <th class="col-actions"></th>
+              </tr>
+            </thead>
+            <tbody id="fileTableBody">
+              <!-- populated by JS -->
+            </tbody>
+          </table>
+          <div class="files-empty" id="filesEmpty" style="display:none;">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+            </svg>
+            <p>No files found</p>
+          </div>
+        </div>
+
+        <!-- Grid view -->
+        <div class="files-grid" id="gridView" style="display:none;">
+          <!-- populated by JS -->
+        </div>
+
+      </div>
+      <!-- /LEFT -->
+
+      <!-- RIGHT: New file panel -->
+      <aside class="files-new-panel" id="newPanel">
+        <div class="new-panel-header">
+          <div class="new-panel-title">New</div>
+          <p class="new-panel-subtitle">Create a new file or folder</p>
+        </div>
+
+        <div class="new-panel-body">
+          <div class="new-panel-field">
+            <label class="new-panel-label">Name</label>
+            <input
+              type="text"
+              class="form-input"
+              id="newItemName"
+              placeholder="Untitled"
+              oninput="onNewNameInput()"
+            />
+          </div>
+
+          <div class="new-panel-field">
+            <label class="new-panel-label">Type</label>
+            <div class="type-cards" id="typeCards">
+
+              <button class="type-card" data-type="document" onclick="selectType(this)">
+                <div class="type-card-icon icon-doc">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                  </svg>
+                </div>
+                <div class="type-card-text">
+                  <span class="type-card-name">Document</span>
+                  <span class="type-card-desc">Word processor, notes</span>
+                </div>
+              </button>
+
+              <button class="type-card" data-type="spreadsheet" onclick="selectType(this)">
+                <div class="type-card-icon icon-sheet">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="3" y1="9" x2="21" y2="9"/>
+                    <line x1="3" y1="15" x2="21" y2="15"/>
+                    <line x1="9" y1="3" x2="9" y2="21"/>
+                    <line x1="15" y1="3" x2="15" y2="21"/>
+                  </svg>
+                </div>
+                <div class="type-card-text">
+                  <span class="type-card-name">Spreadsheet</span>
+                  <span class="type-card-desc">Tables, data</span>
+                </div>
+              </button>
+
+              <button class="type-card" data-type="folder" onclick="selectType(this)">
+                <div class="type-card-icon icon-folder">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                  </svg>
+                </div>
+                <div class="type-card-text">
+                  <span class="type-card-name">Folder</span>
+                  <span class="type-card-desc">Organise your files</span>
+                </div>
+              </button>
+
+              <button class="type-card" data-type="code" onclick="selectType(this)">
+                <div class="type-card-icon icon-code">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"/>
+                    <polyline points="8 6 2 12 8 18"/>
+                  </svg>
+                </div>
+                <div class="type-card-text">
+                  <span class="type-card-name">Code File</span>
+                  <span class="type-card-desc">HTML, JS, CSS...</span>
+                </div>
+              </button>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="new-panel-footer">
+          <button class="btn btn-primary new-create-btn" id="createBtn" onclick="createItem()" disabled>
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Create
+          </button>
+        </div>
+      </aside>
+      <!-- /RIGHT -->
+
+    </div>
+    <!-- /files-body -->
+
+  </main>
+  <!-- /MAIN CONTENT -->
+
+</div>
+
+<!-- ========== UPLOAD MODAL ========== -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Upload File</h2>
+      <button class="modal-close" onclick="closeModal('upload')" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">File</label>
+      <div class="upload-dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <input type="file" id="fileInput" style="display:none" onchange="onFileSelected(event)" />
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 16 12 12 8 16"/>
+          <line x1="12" y1="12" x2="12" y2="21"/>
+          <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
+        </svg>
+        <span class="dropzone-text" id="dropzoneText">Click to upload</span>
+        <span class="dropzone-hint">or drag and drop</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">File Name</label>
+      <input type="text" class="form-input" id="uploadFileName" placeholder="Enter file name..." />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <input type="text" class="form-input" id="uploadCategory" placeholder="e.g. Work, Design..." />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="uploadDescription" placeholder="Add file description..."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('upload')">Cancel</button>
+      <button class="btn btn-primary" onclick="uploadFile()">Upload File</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== FILE ACTIONS MENU ========== -->
+<div class="file-actions-menu" id="actionsMenu" style="display:none;">
+  <button class="file-actions-item" onclick="renameFile()">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </svg>
+    Rename
+  </button>
+  <button class="file-actions-item" onclick="downloadFile()">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Download
+  </button>
+  <div class="file-actions-sep"></div>
+  <button class="file-actions-item danger" onclick="deleteFile()">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="3 6 5 6 21 6"/>
+      <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+      <path d="M10 11v6M14 11v6"/>
+      <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+    </svg>
+    Delete
+  </button>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/router.js"></script>
+<script src="js/modules/files.js"></script>
+</body>
+</html>
