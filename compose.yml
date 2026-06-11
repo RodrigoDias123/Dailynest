@@ -7,6 +7,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./logs/postgres:/logs/postgres
     ports:
       - "5433:5432"
 
@@ -16,7 +17,8 @@ services:
       dockerfile: Dockerfile
     command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
-      - ./backend:/app
+      - ./backend/app:/app/app
+      - ./logs/api:/logs/api
     ports:
       - "8000:8000"
     environment:
@@ -40,10 +42,16 @@ services:
         published: "5050"
         protocol: tcp
     volumes:
-      - type: volume
-        source: pgadmin_data
-        target: /var/lib/pgadmin
-        volume: {}
+      - ./volumes/pgadmin:/var/lib/pgadmin
+      - ./logs/pgadmin:/logs/pgadmin
+
+  logs:
+    image: alpine
+    command: ["sh", "-c", "mkdir -p /logs/api /logs/postgres /logs/pgadmin && tail -f /dev/null"]
+    volumes:
+      - ./logs/api:/logs/api
+      - ./logs/postgres:/logs/postgres
+      - ./logs/pgadmin:/logs/pgadmin
 
 volumes:
   postgres_data:
