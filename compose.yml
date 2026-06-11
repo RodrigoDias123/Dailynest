@@ -37,10 +37,7 @@ services:
     networks:
       default: null
     ports:
-      - mode: ingress
-        target: 80
-        published: "5050"
-        protocol: tcp
+      - "5050:80"
     volumes:
       - ./volumes/pgadmin:/var/lib/pgadmin
       - ./logs/pgadmin:/logs/pgadmin
