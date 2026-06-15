@@ -31,10 +31,7 @@ def get_task_by_id(db: Session, task_id: int, current_user):
         raise NotFoundError("Task not found")
 
     if task.user_id != current_user.id:
-        logger.error(
-            "User %s attempted to access task %s owned by user %s",
-            current_user.id, task_id, task.user_id
-        )
+        logger.error("User %s attempted to access task %s owned by user %s", current_user.id, task_id, task.user_id)
         raise ValidationError("Not allowed")
 
     return task

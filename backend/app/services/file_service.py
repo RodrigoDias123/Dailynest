@@ -31,10 +31,7 @@ def get_file_by_id(db: Session, file_id: int, current_user):
         raise NotFoundError("File not found")
 
     if file.user_id != current_user.id:
-        logger.error(
-            "User %s attempted to access file %s owned by user %s",
-            current_user.id, file_id, file.user_id
-        )
+        logger.error("User %s attempted to access file %s owned by user %s", current_user.id, file_id, file.user_id)
         raise ValidationError("Not allowed")
 
     return file

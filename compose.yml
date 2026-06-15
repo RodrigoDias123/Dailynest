@@ -7,7 +7,6 @@ services:
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./logs/postgres:/logs/postgres
     ports:
       - "5433:5432"
 
@@ -40,15 +39,12 @@ services:
       - "5050:80"
     volumes:
       - ./volumes/pgadmin:/var/lib/pgadmin
-      - ./logs/pgadmin:/logs/pgadmin
 
   logs:
     image: alpine
     command: ["sh", "-c", "mkdir -p /logs/api /logs/postgres /logs/pgadmin && tail -f /dev/null"]
     volumes:
       - ./logs/api:/logs/api
-      - ./logs/postgres:/logs/postgres
-      - ./logs/pgadmin:/logs/pgadmin
 
 volumes:
   postgres_data:

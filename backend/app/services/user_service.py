@@ -32,10 +32,7 @@ def update_user(db: Session, data: UserUpdate, current_user):
         existing = db.exec(select(User).where(User.email == data.email)).first()
 
         if existing:
-            logger.warning(
-                "User %s attempted to update email to %s which is already in use",
-                current_user.id, data.email
-            )
+            logger.warning("User %s attempted to update email to %s which is already in use", current_user.id, data.email)
             raise ValidationError("Email already in use")
 
         user.email = data.email

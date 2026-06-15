@@ -10,3 +10,10 @@
 2026-06-11 20:11:14,596 - INFO - User registered successfully: string
 2026-06-11 20:11:14,765 - INFO - Access token created for user 1
 2026-06-11 20:11:14,765 - INFO - Token generated for new user: string
+2026-06-15 18:31:45,604 - INFO - Attempting to register user: admin@admin.com
+2026-06-15 18:31:45,803 - INFO - User 1 registered successfully
+2026-06-15 18:31:45,803 - INFO - User registered successfully: admin@admin.com
+2026-06-15 18:31:45,975 - INFO - User 1 authenticated successfully
+2026-06-15 18:31:45,975 - INFO - Access token created for user 1
+2026-06-15 18:31:45,976 - INFO - User 1 logged in successfully
+2026-06-15 18:31:45,976 - INFO - Token generated for new user: admin@admin.com
