@@ -347,10 +347,21 @@ function rebuildViews() {
   else                              buildMonthGrid();
 }
 
+/* ── Map backend agenda to frontend event format ─────────── */
+function agendaToEvent(a) {
+  return {
+    id:          a.id,
+    title:       a.event,
+    start_date:  a.date + 'T00:00:00',
+    end_date:    a.date + 'T01:00:00',
+    description: ''
+  };
+}
+
 /* ── Load events from API (with fallback sample data) ────── */
 function loadEvents() {
-  apiGet('/events').then(function (data) {
-    EVENTS = data;
+  apiGet('/agendas/').then(function (data) {
+    EVENTS = Array.isArray(data) ? data.map(agendaToEvent) : [];
     rebuildViews();
     renderUpcomingPanel();
   }).catch(function () {
@@ -438,17 +449,20 @@ function submitEventForm(e) {
   }
 
   // ── Sync to API in background ───────────────────────────
-  var payload = { title: title, description: desc, start_date: startDate, end_date: endDate };
+  var dateOnly = startDate ? startDate.slice(0, 10) : '';
+  var apiPayload = { event: title, date: dateOnly, category: 'Personal' };
   if (_editingEventId != null) {
-    apiPut('/events/' + _editingEventId, payload).catch(function () {});
+    apiPatch('/agendas/' + _editingEventId, apiPayload).catch(function () {});
   } else {
-    apiPost('/events', payload)
+    var userId = parseInt(localStorage.getItem('dn_user_id'), 10) || 0;
+    apiPost('/agendas/', Object.assign({ user_id: userId }, apiPayload))
       .then(function (created) {
         // Replace the locally-created event with the server response (gets real id)
         if (created && created.id) {
+          var serverEvt = agendaToEvent(created);
           var localId = EVENTS[EVENTS.length - 1].id;
           for (var j = 0; j < EVENTS.length; j++) {
-            if (EVENTS[j].id === localId) { EVENTS[j] = created; break; }
+            if (EVENTS[j].id === localId) { EVENTS[j] = serverEvt; break; }
           }
         }
       })

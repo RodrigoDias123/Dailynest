@@ -1,3 +1,18 @@
+/* ── Load tasks from API ────────────────────────────────── */
+(function loadTasks() {
+  apiGet('/tasks/').then(function (tasks) {
+    var tbody = document.getElementById('taskTableBody');
+    if (!tbody || !tasks.length) return;
+    tbody.innerHTML = '';
+    tasks.forEach(function (t) {
+      tbody.insertAdjacentHTML('beforeend',
+        buildRow({ id: t.id, name: t.title, status: 'not-started',
+                   priority: 'medium', dueDate: null, description: t.description }));
+    });
+    updateStatCards();
+  }).catch(function () { /* backend unavailable — start with empty list */ });
+}());
+
 /* ── Task helpers ───────────────────────────────────────── */
 var statusMap = {
   'not-started': 'Not started',
@@ -230,10 +245,8 @@ function submitCreateTask(e) {
 
   var payload = {
     title:       name,
-    status:      status,
-    priority:    priority,
-    due_date:    dueDate || null,
-    description: description || null
+    description: description || null,
+    category:    'Personal'
   };
 
   if (_editingRow) {
@@ -242,7 +255,7 @@ function submitCreateTask(e) {
     var row = _editingRow;
 
     if (id && !String(id).startsWith('local-')) {
-      apiPut('/tasks/' + id, payload).catch(function () { /* fallback: update locally only */ });
+      apiPatch('/tasks/' + id, { title: payload.title, description: payload.description, category: payload.category }).catch(function () { /* fallback: update locally only */ });
     }
 
     // Update row attributes and cells locally
@@ -269,19 +282,17 @@ function submitCreateTask(e) {
     _editingRow = null;
 
   } else {
-    // ── CREATE MODE ── POST /tasks
-    apiPost('/tasks', payload)
+    // ── CREATE MODE ── POST /tasks/
+    apiPost('/tasks/', payload)
       .then(function (created) {
-        // If API returns the created task with an id, use it
         var tbody = document.getElementById('taskTableBody');
         if (tbody) tbody.insertAdjacentHTML('beforeend',
-          buildRow({ id: created.id, name: created.title, status: created.status,
-                     priority: created.priority, dueDate: created.due_date,
+          buildRow({ id: created.id, name: created.title, status: status,
+                     priority: priority, dueDate: dueDate,
                      description: created.description }));
         updateStatCards();
       })
       .catch(function () {
-        // Offline / no backend — add locally
         var tbody = document.getElementById('taskTableBody');
         if (tbody) tbody.insertAdjacentHTML('beforeend',
           buildRow({ name: name, status: status, priority: priority,

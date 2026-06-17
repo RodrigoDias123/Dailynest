@@ -100,11 +100,25 @@
 </div>
 
 <script src="js/router.js"></script>
+<script src="js/api.js"></script>
 <script>
   function handleLogin(e) {
     e.preventDefault();
-    // Redirect to tasks on success (demo)
-    window.location.href = 'tasks.html';
+    var email    = document.getElementById('email').value.trim();
+    var password = document.getElementById('password').value;
+
+    apiPost('/auth/login', { email: email, password: password })
+      .then(function (data) {
+        localStorage.setItem('dn_token', data.access_token);
+        return apiGet('/users/profile');
+      })
+      .then(function (profile) {
+        localStorage.setItem('dn_user_id', profile.id);
+        window.location.href = 'tasks.html';
+      })
+      .catch(function () {
+        alert('Login failed. Check your credentials and try again.');
+      });
   }
 </script>
 </body>

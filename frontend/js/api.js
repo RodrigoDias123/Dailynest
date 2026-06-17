@@ -1,8 +1,17 @@
 /* ── API ────────────────────────────────────────────────── */
 var API_BASE = 'http://localhost:8000';
 
+function getAuthHeaders() {
+  var token = localStorage.getItem('dn_token');
+  var headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  return headers;
+}
+
 function apiGet(path) {
-  return fetch(API_BASE + path).then(function (r) {
+  return fetch(API_BASE + path, {
+    headers: getAuthHeaders()
+  }).then(function (r) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   });
@@ -11,7 +20,7 @@ function apiGet(path) {
 function apiPost(path, body) {
   return fetch(API_BASE + path, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders(),
     body: JSON.stringify(body)
   }).then(function (r) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -22,7 +31,7 @@ function apiPost(path, body) {
 function apiPut(path, body) {
   return fetch(API_BASE + path, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders(),
     body: JSON.stringify(body)
   }).then(function (r) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -33,7 +42,7 @@ function apiPut(path, body) {
 function apiPatch(path, body) {
   return fetch(API_BASE + path, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders(),
     body: JSON.stringify(body)
   }).then(function (r) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -42,8 +51,10 @@ function apiPatch(path, body) {
 }
 
 function apiDelete(path) {
-  return fetch(API_BASE + path, { method: 'DELETE' }).then(function (r) {
+  return fetch(API_BASE + path, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  }).then(function (r) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
   });
 }
-

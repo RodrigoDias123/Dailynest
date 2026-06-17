@@ -17,10 +17,29 @@ var _currentView = 'list';
 var _selectedType = null;
 var _activeMenuFileId = null;
 
+/* ── Load files from API ─────────────────────────────────── */
+function loadFiles() {
+  apiGet('/files/').then(function (data) {
+    if (!Array.isArray(data) || !data.length) return;
+    _files = data.map(function (f) {
+      return {
+        id:       f.id,
+        name:     f.filename,
+        type:     'default',
+        items:    null,
+        modified: 'Synced',
+        size:     null
+      };
+    });
+    renderFiles(_files);
+  }).catch(function () { /* backend unavailable — keep example data */ });
+}
+
 /* ── Init ────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', function () {
   renderFiles(_files);
   updateNavBadge();
+  loadFiles();
 
   document.addEventListener('click', function (e) {
     var menu = document.getElementById('actionsMenu');
@@ -141,6 +160,13 @@ function createItem() {
   _files.unshift(newFile);
   renderFiles(_files);
 
+  var userId = parseInt(localStorage.getItem('dn_user_id'), 10) || 0;
+  apiPost('/files/', { filename: name, filepath: name, category: 'Personal', user_id: userId })
+    .then(function (created) {
+      if (created && created.id) newFile.id = created.id;
+    })
+    .catch(function () {});
+
   document.getElementById('newItemName').value = '';
   document.querySelectorAll('.type-card').forEach(function (c) { c.classList.remove('selected'); });
   _selectedType = null;
@@ -194,6 +220,9 @@ function renameFile() {
   if (newName && newName.trim()) {
     f.name = newName.trim();
     renderFiles(applySearch());
+    if (typeof id === 'number' && !f.example) {
+      apiPatch('/files/' + id, { filename: f.name }).catch(function () {});
+    }
   }
 }
 
@@ -209,6 +238,9 @@ function deleteFile() {
   if (!window.confirm('Delete "' + f.name + '"?')) return;
   _files = _files.filter(function (x) { return x.id !== f.id; });
   renderFiles(applySearch());
+  if (typeof id === 'number' && !f.example) {
+    apiDelete('/files/' + id).catch(function () {});
+  }
 }
 
 /* ── Upload modal ────────────────────────────────────────── */

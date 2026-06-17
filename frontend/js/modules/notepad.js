@@ -52,9 +52,11 @@ function loadFromLocal() {
 /* ── Load notes from API ─────────────────────────────────── */
 
 function loadNotes() {
-  apiGet('/notes')
+  apiGet('/notepads/')
     .then(function (data) {
-      NOTES = Array.isArray(data) ? data : [];
+      NOTES = Array.isArray(data) ? data.map(function (n) {
+        return { id: n.id, title: n.title, body: n.content || '' };
+      }) : [];
       renderNoteList();
     })
     .catch(function () {
@@ -232,7 +234,8 @@ function newNote() {
 
 function _persistPendingNew(note, title, body) {
   _isPendingNew = false;
-  apiPost('/notes', { title: title, body: body })
+  var userId = parseInt(localStorage.getItem('dn_user_id'), 10) || 0;
+  apiPost('/notepads/', { title: title, content: body, category: 'Personal', user_id: userId })
     .then(function (created) {
       if (created && created.id) { note.id = created.id; _selectedNoteId = created.id; }
       setSaveStatus('saved');
@@ -272,7 +275,7 @@ function saveNote() {
   if (_isPendingNew) {
     _persistPendingNew(note, title, body);
   } else {
-    apiPut('/notes/' + _selectedNoteId, { title: title, body: body })
+    apiPatch('/notepads/' + _selectedNoteId, { title: title, content: body })
       .then(function (updated) {
         if (updated && updated.id) { note.id = updated.id; _selectedNoteId = updated.id; }
         setSaveStatus('saved');
@@ -305,7 +308,7 @@ function deleteNote() {
   var counter = npGet('notesCount');
   if (counter) counter.textContent = NOTES.length;
 
-  apiDelete('/notes/' + idToDelete)
+  apiDelete('/notepads/' + idToDelete)
     .catch(function () {}); // best-effort
 }
 
