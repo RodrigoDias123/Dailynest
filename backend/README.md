@@ -24,3 +24,10 @@ AI give me this structure idea
 
 correct progression
     router → schema(validation) -> service(queries) → model(structure) → database
+
+multiple dockerfile configs
+https://stackoverflow.com/questions/27409761/docker-multiple-dockerfiles-in-project
+
+register validations
+https://stackoverflow.com/questions/5142103/regex-to-validate-password-strength
+https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript

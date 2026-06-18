@@ -12,8 +12,8 @@ class User(SQLModel, table=True):
     __tablename__ = "users"
     
     id: Optional[int] = Field(default=None, primary_key=True)
-    name: str = Field(index=True)
-    email: str = Field(unique=True, index=True)
+    name: str = Field(index=True, max_length=15)
+    email: str = Field(unique=True, index=True, max_length=100)
     password: str
     
     # Relationships
