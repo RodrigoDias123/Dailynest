@@ -110,6 +110,20 @@
 .status-badge.completed { background: var(--status-completed-bg); color: var(--status-completed-text); }
 .status-badge.completed .dot { background: var(--status-completed-dot); }
 
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.priority-badge.high   { background: #fef2f2; color: #dc2626; }
+.priority-badge.medium { background: #fffbeb; color: #d97706; }
+.priority-badge.low    { background: #f0fdf4; color: #16a34a; }
+
 .due-date {
   display: inline-flex;
   align-items: center;
@@ -169,7 +183,7 @@ td.task-actions {
     display: grid;
     /* col 1: checkbox  col 2: content  col 3: actions */
     grid-template-columns: auto minmax(0, 1fr) auto;
-    /* row 1: name  row 2: status  row 3: due date */
+    /* row 1: name  row 2: status  row 3: priority */
     grid-template-rows: auto auto auto;
     column-gap: 12px;
     row-gap: 3px;
@@ -210,16 +224,19 @@ td.task-actions {
   /* Status badge: col 2, row 2 */
   .task-table td:nth-child(3) { grid-column: 2; grid-row: 2; }
 
-  /* Due date: col 2, row 3 — visible on mobile */
+  /* Priority badge: col 2, row 3 */
   .task-table td:nth-child(4) { grid-column: 2; grid-row: 3; }
 
-  /* Created: hidden (redundant on mobile) */
+  /* Due date: hidden on mobile (keep layout compact) */
   .task-table td:nth-child(5) { display: none !important; }
+
+  /* Created: hidden */
+  .task-table td:nth-child(6) { display: none !important; }
 
   /* Actions: col 3, spans all 3 rows */
   .task-table td.task-actions {
     grid-column: 3;
-    grid-row: 1 / 4;
+    grid-row: 1 / 5;
     width: auto;
     white-space: normal;
     flex-direction: column;

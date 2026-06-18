@@ -507,3 +507,34 @@ O `components.css` é carregado depois do `layout.css` no HTML. Por isso a regra
 - [x] Eliminação de conta chama `DELETE /users/profile` e faz logout automático
 - [x] Sidebar mostra dados reais do utilizador em vez de `RD` / `Rodrigo Dias` hardcoded
 
+---
+
+## Task #14 — Tasks: Campo de Prioridade
+
+**Data:** 18 de junho de 2026  
+**Modelo:** Claude Sonnet 4.6  
+**Sessão:** Agente autónomo
+
+### O que foi criado / alterado
+
+| Ficheiro | Alteração |
+|---|---|
+| `backend/app/models/task_models.py` | Adicionado campo `priority: str = Field(default="medium", max_length=20)` ao modelo `Task` |
+| `backend/app/schemas/task_schema.py` | Campo `priority: str = "medium"` adicionado a `TaskBase`; campo `priority: Optional[str] = None` adicionado a `TaskUpdate`; `TaskPublic` herda automaticamente de `TaskBase` |
+| `backend/app/services/task_service.py` | `create_task()` passa `priority=data.priority` ao construir o modelo; `update_task()` aplica `task.priority = data.priority` se `data.priority is not None` |
+| Base de dados (PostgreSQL) | Coluna `priority VARCHAR(20) NOT NULL DEFAULT 'medium'` adicionada à tabela `tasks` via `ALTER TABLE` |
+| `frontend/tasks.html` | Cabeçalho `<th>Priority</th>` adicionado à tabela (entre Status e Due Date); linha de exemplo estática actualizada com `<td><span class="priority-badge medium">Medium</span></td>` |
+| `frontend/js/modules/tasks.js` | Adicionado `var priorityLabel` com mapeamento `{high, medium, low}`; `buildRow()` gera `<span class="priority-badge {priority}">` na coluna de prioridade; `loadTasks()` passa `priority: t.priority || 'medium'` ao construir cada linha (em vez de hardcoded `'medium'`); `submitCreateTask()` inclui `priority` no payload de `POST` e de `PATCH`; modo edição actualiza a célula `.priority-badge` da linha após guardar |
+| `frontend/css/modules/tasks.css` | Adicionadas classes `.priority-badge` com variantes de cor: `.high` (fundo vermelho claro / texto vermelho), `.medium` (fundo amarelo claro / texto âmbar), `.low` (fundo verde claro / texto verde); layout mobile actualizado — prioridade ocupa a linha 3 do card; "Due Date" ocultada em mobile para manter o layout compacto |
+
+### Critérios cumpridos (Task #14)
+
+- [x] Campo `priority` persistido na base de dados com default `"medium"`
+- [x] API aceita `priority` na criação (`POST /tasks/`) e na edição (`PATCH /tasks/{id}`)
+- [x] Coluna "Priority" visível na tabela entre Status e Due Date
+- [x] Badge colorido por nível: vermelho (High), âmbar (Medium), verde (Low)
+- [x] Modal de criação e edição enviava já o campo; agora é efectivamente guardado no backend
+- [x] Filtro "All priorities / High / Medium / Low" no toolbar já existia e funciona com os dados reais
+- [x] Ao editar uma tarefa, o badge na linha é actualizado imediatamente sem reload
+- [x] Responsivo: em mobile o badge de prioridade aparece na linha 3 do card
+

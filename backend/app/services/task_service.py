@@ -12,6 +12,7 @@ def create_task(db: Session, data: TaskCreate, current_user):
         description=data.description,
         category=data.category,
         status=data.status,
+        priority=data.priority,
         user_id=current_user.id
     )
 
@@ -62,6 +63,9 @@ def update_task(db: Session, task_id: int, data: TaskUpdate, current_user):
 
     if data.status is not None:
         task.status = data.status
+
+    if data.priority is not None:
+        task.priority = data.priority
 
     db.add(task)
     db.commit()

@@ -24,7 +24,7 @@ function frontendToDb(s) {
     tasks.forEach(function (t) {
       tbody.insertAdjacentHTML('beforeend',
         buildRow({ id: t.id, name: t.title, status: dbToFrontend(t.status),
-                   priority: 'medium', dueDate: null, description: t.description }));
+                   priority: t.priority || 'medium', dueDate: null, description: t.description }));
     });
     updateStatCards();
   }).catch(function () { /* backend unavailable — start with empty list */ });
@@ -50,16 +50,20 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+var priorityLabel = { high: 'High', medium: 'Medium', low: 'Low' };
+
 function buildRow(task) {
-  var label   = statusMap[task.status] || 'Not started';
-  var dateStr = task.dueDate ? formatDate(task.dueDate) : 'No date';
-  var id      = task.id || ('local-' + _taskIdCounter++);
-  var isDone  = task.status === 'completed';
+  var label    = statusMap[task.status] || 'Not started';
+  var dateStr  = task.dueDate ? formatDate(task.dueDate) : 'No date';
+  var id       = task.id || ('local-' + _taskIdCounter++);
+  var isDone   = task.status === 'completed';
+  var priority = task.priority || 'medium';
+  var pLabel   = priorityLabel[priority] || 'Medium';
 
   return '<tr'
     + ' data-id="'       + id                                   + '"'
     + ' data-status="'   + task.status                          + '"'
-    + ' data-priority="' + (task.priority   || 'medium')        + '"'
+    + ' data-priority="' + priority                             + '"'
     + ' data-name="'     + escapeHtml(task.name)                + '"'
     + ' data-due="'      + escapeHtml(task.dueDate      || '')  + '"'
     + ' data-desc="'     + escapeHtml(task.description  || '')  + '">'
@@ -68,6 +72,7 @@ function buildRow(task) {
     + ' onchange="markComplete(this)" title="Mark as complete"></td>'
     + '<td><span class="task-name"' + (isDone ? ' style="text-decoration:line-through;color:var(--color-text-muted)"' : '') + '>' + escapeHtml(task.name) + '</span></td>'
     + '<td><span class="status-badge ' + task.status + '"><span class="dot"></span>' + label + '</span></td>'
+    + '<td><span class="priority-badge ' + priority + '">' + pLabel + '</span></td>'
     + '<td><span class="due-date">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
     + '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>'
@@ -257,7 +262,8 @@ function submitCreateTask(e) {
     title:       name,
     description: description || null,
     category:    'Personal',
-    status:      frontendToDb(status)
+    status:      frontendToDb(status),
+    priority:    priority
   };
 
   if (_editingRow) {
@@ -266,7 +272,7 @@ function submitCreateTask(e) {
     var row = _editingRow;
 
     if (id && !String(id).startsWith('local-')) {
-      apiPatch('/tasks/' + id, { title: payload.title, description: payload.description, category: payload.category, status: payload.status }).catch(function () { /* fallback: update locally only */ });
+      apiPatch('/tasks/' + id, { title: payload.title, description: payload.description, category: payload.category, status: payload.status, priority: priority }).catch(function () { /* fallback: update locally only */ });
     }
 
     // Update row attributes and cells locally
@@ -283,6 +289,11 @@ function submitCreateTask(e) {
     row.querySelector('.status-badge').className = 'status-badge ' + status;
     row.querySelector('.status-badge').innerHTML =
       '<span class="dot"></span>' + label;
+    var pBadge = row.querySelector('.priority-badge');
+    if (pBadge) {
+      pBadge.className = 'priority-badge ' + priority;
+      pBadge.textContent = priorityLabel[priority] || 'Medium';
+    }
     row.querySelector('.due-date').innerHTML =
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
       + '<rect x="3" y="4" width="18" height="18" rx="2"/>'

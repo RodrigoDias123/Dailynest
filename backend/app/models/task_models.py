@@ -13,6 +13,7 @@ class Task(SQLModel, table=True):
     description: Optional[str] = None
     category: str = Field(default="Personal", max_length=20)
     status: str = Field(default="Not-Started", max_length=20)
-    
+    priority: str = Field(default="medium", max_length=20)
+
     user_id: int = Field(foreign_key="users.id", nullable=False)
     user: Optional["User"] = Relationship(back_populates="tasks")
