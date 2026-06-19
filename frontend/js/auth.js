@@ -1,5 +1,4 @@
 /* ── Auth utilities ─────────────────────────────────────── */
-
 function checkAuth() {
   if (!localStorage.getItem('dn_token')) {
     window.location.href = 'login.html';

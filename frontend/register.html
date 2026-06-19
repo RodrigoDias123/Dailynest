@@ -34,7 +34,7 @@
       <form class="auth-form" onsubmit="handleRegister(event)">
 
         <div class="form-group">
-          <label class="form-label" for="username">Username</label>
+          <label class="form-label" for="name">Name</label>
           <div class="input-wrap">
             <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
@@ -42,11 +42,11 @@
             </svg>
             <input
               type="text"
-              id="username"
-              name="username"
-              placeholder="Choose a username"
+              id="name"
+              name="name"
+              placeholder="Enter your name"
               required
-              autocomplete="username"
+              autocomplete="name"
             />
           </div>
         </div>
@@ -143,35 +143,6 @@
 
 <script src="js/router.js"></script>
 <script src="js/api.js"></script>
-<script>
-  if (localStorage.getItem('dn_token')) {
-    window.location.replace('tasks.html');
-  }
-
-  function handleRegister(e) {
-    e.preventDefault();
-    var name    = document.getElementById('username').value.trim();
-    var email   = document.getElementById('email').value.trim();
-    var pwd     = document.getElementById('password').value;
-    var confirm = document.getElementById('confirmPassword').value;
-    if (pwd !== confirm) {
-      alert('Passwords do not match.');
-      return;
-    }
-
-    apiPost('/auth/register', { name: name, email: email, password: pwd })
-      .then(function (data) {
-        localStorage.setItem('dn_token', data.access_token);
-        return apiGet('/users/profile');
-      })
-      .then(function (profile) {
-        localStorage.setItem('dn_user_id', profile.id);
-        window.location.href = 'tasks.html';
-      })
-      .catch(function () {
-        alert('Registration failed. The email may already be in use.');
-      });
-  }
-</script>
+<script src="js/modules/validations.js"></script>
 </body>
 </html>
