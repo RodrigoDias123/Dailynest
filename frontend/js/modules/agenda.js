@@ -374,17 +374,7 @@ function loadEvents() {
     buildMiniCal();
     renderUpcomingPanel();
   }).catch(function () {
-    // Fallback when the backend is not running
-    EVENTS = [
-      { id: 1, title: 'Team Meeting',    start_date: '2026-06-01T09:00:00', end_date: '2026-06-01T10:00:00', description: '' },
-      { id: 2, title: 'Project Review',  start_date: '2026-06-05T10:00:00', end_date: '2026-06-05T11:00:00', description: '' },
-      { id: 3, title: 'Lunch Break',     start_date: '2026-06-05T12:00:00', end_date: '2026-06-05T13:00:00', description: '' },
-      { id: 4, title: 'Client Call',     start_date: '2026-06-10T14:00:00', end_date: '2026-06-10T15:00:00', description: '' },
-      { id: 5, title: 'Sprint Planning', start_date: '2026-06-15T09:30:00', end_date: '2026-06-15T10:30:00', description: '' },
-      { id: 6, title: 'Design Review',   start_date: '2026-06-20T11:00:00', end_date: '2026-06-20T12:00:00', description: '' },
-      { id: 7, title: '1:1 Meeting',     start_date: '2026-06-22T16:00:00', end_date: '2026-06-22T17:00:00', description: '' },
-      { id: 8, title: 'Release Demo',    start_date: '2026-06-28T15:00:00', end_date: '2026-06-28T16:00:00', description: '' },
-    ];
+    EVENTS = [];
     rebuildViews();
     buildMiniCal();
     renderUpcomingPanel();

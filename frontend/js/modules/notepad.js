@@ -71,14 +71,6 @@ function loadNotes() {
     })
     .catch(function () {
       loadFromLocal();
-      if (!NOTES.length) {
-        NOTES = [
-          { id: 'local-1', title: 'Welcome to Notepad', body: 'Start capturing your ideas here. Create, edit, and delete notes easily.' },
-          { id: 'local-2', title: 'Meeting notes',      body: 'Discuss roadmap priorities, Q3 goals, and team allocations.' }
-        ];
-        _localIdCounter = 3;
-        persistLocal();
-      }
       renderNoteList();
     });
 }
