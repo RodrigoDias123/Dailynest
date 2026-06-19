@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
+from typing import Optional
 from sqlmodel import Session
 from app.services.task_service import create_task, get_tasks, get_task_by_id, update_task, delete_task
 from app.schemas.task_schema import TaskCreate, TaskUpdate, TaskPublic
@@ -29,12 +30,13 @@ def create_task_route(
 
 @router.get("/", response_model=list[TaskPublic])
 def list_tasks_route(
+    category: Optional[str] = Query(None),
     db: Session = Depends(get_session),
     current_user = Depends(get_current_user)
 ):
-    logger.info("User %s requested all tasks", current_user.id)
+    logger.info("User %s requested all tasks (category=%s)", current_user.id, category)
     try:
-        return get_tasks(db, current_user)
+        return get_tasks(db, current_user, category)
     except Exception as exc:
         logger.exception("Unexpected error occurred while listing tasks for user %s", current_user.id)
         raise exc

@@ -16,10 +16,15 @@ function frontendToDb(s) {
 }
 
 /* ── Load tasks from API ────────────────────────────────── */
+function _fetchTasks() {
+  var ws = typeof getWorkspace === 'function' ? getWorkspace() : 'Work';
+  return apiGet('/tasks/?category=' + encodeURIComponent(ws));
+}
+
 (function loadTasks() {
-  apiGet('/tasks/').then(function (tasks) {
+  _fetchTasks().then(function (tasks) {
     var tbody = document.getElementById('taskTableBody');
-    if (!tbody || !tasks.length) return;
+    if (!tbody) return;
     tbody.innerHTML = '';
     tasks.forEach(function (t) {
       tbody.insertAdjacentHTML('beforeend',
@@ -29,6 +34,20 @@ function frontendToDb(s) {
     updateStatCards();
   }).catch(function () { /* backend unavailable — start with empty list */ });
 }());
+
+function reloadWorkspace() {
+  var tbody = document.getElementById('taskTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  _fetchTasks().then(function (tasks) {
+    tasks.forEach(function (t) {
+      tbody.insertAdjacentHTML('beforeend',
+        buildRow({ id: t.id, name: t.title, status: dbToFrontend(t.status),
+                   priority: t.priority || 'medium', dueDate: null, description: t.description }));
+    });
+    updateStatCards();
+  }).catch(function () { updateStatCards(); });
+}
 
 // Internal counter for local row IDs
 var _taskIdCounter = 1;
@@ -262,7 +281,7 @@ function submitCreateTask(e) {
   var payload = {
     title:       name,
     description: description || null,
-    category:    'Personal',
+    category:    typeof getWorkspace === 'function' ? getWorkspace() : 'Work',
     status:      frontendToDb(status),
     priority:    priority
   };

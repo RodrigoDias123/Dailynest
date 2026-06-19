@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
+from typing import Optional
 from sqlmodel import Session
 from app.services.agenda_service import create_agenda, get_agendas, get_agenda_by_id, update_agenda, delete_agenda
 from app.schemas.agenda_schema import AgendaCreate, AgendaUpdate, AgendaPublic
@@ -25,12 +26,13 @@ def create_agenda_route(
 
 @router.get("/", response_model=list[AgendaPublic])
 def list_agendas_route(
+    category: Optional[str] = Query(None),
     db: Session = Depends(get_session),
     current_user = Depends(get_current_user)
 ):
-    logger.info("User %s requested all agendas", current_user.id)
+    logger.info("User %s requested all agendas (category=%s)", current_user.id, category)
     try:
-        return get_agendas(db, current_user)
+        return get_agendas(db, current_user, category)
     except Exception as exc:
         logger.exception("Unexpected error occurred while listing agendas for user %s", current_user.id)
         raise exc

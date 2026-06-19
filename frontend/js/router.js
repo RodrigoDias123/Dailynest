@@ -72,6 +72,10 @@ document.addEventListener('click', function (e) {
 });
 
 /* ── Workspace Toggle ───────────────────────────────────── */
+function getWorkspace() {
+  return localStorage.getItem('dn_workspace') || 'Work';
+}
+
 function toggleWorkspace(btn) {
   var parent = btn.closest('.workspace-toggle');
   if (!parent) return;
@@ -79,7 +83,19 @@ function toggleWorkspace(btn) {
     p.classList.remove('active');
   });
   btn.classList.add('active');
+  localStorage.setItem('dn_workspace', btn.textContent.trim());
+  if (typeof reloadWorkspace === 'function') reloadWorkspace();
 }
+
+// Restore active pill from localStorage on load
+(function restoreWorkspacePill() {
+  var ws = getWorkspace();
+  var toggle = document.querySelector('.workspace-toggle');
+  if (!toggle) return;
+  toggle.querySelectorAll('.pill').forEach(function (p) {
+    p.classList.toggle('active', p.textContent.trim() === ws);
+  });
+}());
 
 /* ── Password visibility ────────────────────────────────── */
 function togglePassword(btn) {

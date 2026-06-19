@@ -51,8 +51,18 @@ function loadFromLocal() {
 
 /* ── Load notes from API ─────────────────────────────────── */
 
+function reloadWorkspace() {
+  _selectedNoteId = null;
+  _isDirty = false;
+  _isPendingNew = false;
+  NOTES = [];
+  showEditor(false);
+  loadNotes();
+}
+
 function loadNotes() {
-  apiGet('/notepads/')
+  var ws = typeof getWorkspace === 'function' ? getWorkspace() : 'Work';
+  apiGet('/notepads/?category=' + encodeURIComponent(ws))
     .then(function (data) {
       NOTES = Array.isArray(data) ? data.map(function (n) {
         return { id: n.id, title: n.title, body: n.content || '' };
@@ -235,7 +245,8 @@ function newNote() {
 function _persistPendingNew(note, title, body) {
   _isPendingNew = false;
   var userId = parseInt(localStorage.getItem('dn_user_id'), 10) || 0;
-  apiPost('/notepads/', { title: title, content: body, category: 'Personal', user_id: userId })
+  var ws = typeof getWorkspace === 'function' ? getWorkspace() : 'Work';
+  apiPost('/notepads/', { title: title, content: body, category: ws, user_id: userId })
     .then(function (created) {
       if (created && created.id) { note.id = created.id; _selectedNoteId = created.id; }
       setSaveStatus('saved');

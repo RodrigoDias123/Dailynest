@@ -41,8 +41,10 @@ def get_notepad_by_id(db: Session, notepad_id: int, current_user):
 
 
 #Get all Notes
-def get_notepads(db: Session, current_user):
+def get_notepads(db: Session, current_user, category=None):
     query = select(Notepad).where(Notepad.user_id == current_user.id)
+    if category:
+        query = query.where(Notepad.category == category)
     notepads = db.exec(query).all()
 
     logger.info("User %s fetched %s notepads", current_user.id, len(notepads))

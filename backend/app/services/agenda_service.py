@@ -37,8 +37,10 @@ def get_agenda_by_id(db: Session, agenda_id: int, current_user):
     return agenda
 
 #Get all events
-def get_agendas(db: Session, current_user):
+def get_agendas(db: Session, current_user, category=None):
     query = select(Agenda).where(Agenda.user_id == current_user.id)
+    if category:
+        query = query.where(Agenda.category == category)
     agendas = db.exec(query).all()
 
     logger.info("User %s fetched %s agendas", current_user.id, len(agendas))

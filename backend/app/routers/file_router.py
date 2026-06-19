@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
+from typing import Optional
 from sqlmodel import Session
 from app.services.file_service import create_file, get_files, get_file_by_id, update_file, delete_file
 from app.schemas.file_schema import FileCreate, FileUpdate, FilePublic
@@ -29,12 +30,13 @@ def create_file_route(
 
 @router.get("/", response_model=list[FilePublic])
 def list_files_route(
+    category: Optional[str] = Query(None),
     db: Session = Depends(get_session),
     current_user = Depends(get_current_user)
 ):
-    logger.info("User %s requested all files", current_user.id)
+    logger.info("User %s requested all files (category=%s)", current_user.id, category)
     try:
-        return get_files(db, current_user)
+        return get_files(db, current_user, category)
     except Exception as exc:
         logger.exception("Unexpected error occurred while listing files for user %s", current_user.id)
         raise exc

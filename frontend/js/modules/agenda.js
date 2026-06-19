@@ -362,8 +362,13 @@ function agendaToEvent(a) {
 }
 
 /* ── Load events from API (with fallback sample data) ────── */
+function reloadWorkspace() {
+  loadEvents();
+}
+
 function loadEvents() {
-  apiGet('/agendas/').then(function (data) {
+  var ws = typeof getWorkspace === 'function' ? getWorkspace() : 'Work';
+  apiGet('/agendas/?category=' + encodeURIComponent(ws)).then(function (data) {
     EVENTS = Array.isArray(data) ? data.map(agendaToEvent) : [];
     rebuildViews();
     buildMiniCal();
@@ -457,7 +462,7 @@ function submitEventForm(e) {
 
   // ── Sync to API in background ───────────────────────────
   var dateOnly = startDate ? startDate.slice(0, 10) : '';
-  var apiPayload = { event: title, date: dateOnly, category: 'Personal' };
+  var apiPayload = { event: title, date: dateOnly, category: typeof getWorkspace === 'function' ? getWorkspace() : 'Work' };
   if (_editingEventId != null) {
     apiPatch('/agendas/' + _editingEventId, apiPayload).catch(function () {});
   } else {

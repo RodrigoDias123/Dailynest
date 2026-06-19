@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
+from typing import Optional
 from sqlmodel import Session
 from app.services.notepad_service import create_notepad, get_notepads, get_notepad_by_id, update_notepad, delete_notepad
 from app.schemas.notepad_schema import NotepadCreate, NotepadUpdate, NotepadPublic
@@ -29,12 +30,13 @@ def create_notepad_route(
 
 @router.get("/", response_model=list[NotepadPublic])
 def list_notepads_route(
+    category: Optional[str] = Query(None),
     db: Session = Depends(get_session),
     current_user = Depends(get_current_user)
 ):
-    logger.info("User %s requested all notes", current_user.id)
+    logger.info("User %s requested all notes (category=%s)", current_user.id, category)
     try:
-        return get_notepads(db, current_user)
+        return get_notepads(db, current_user, category)
     except Exception as exc:
         logger.exception("Unexpected error occurred while listing notes for user %s", current_user.id)
         raise exc

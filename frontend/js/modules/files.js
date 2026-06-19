@@ -18,8 +18,13 @@ var _selectedType = null;
 var _activeMenuFileId = null;
 
 /* ── Load files from API ─────────────────────────────────── */
+function reloadWorkspace() {
+  loadFiles();
+}
+
 function loadFiles() {
-  apiGet('/files/').then(function (data) {
+  var ws = typeof getWorkspace === 'function' ? getWorkspace() : 'Work';
+  apiGet('/files/?category=' + encodeURIComponent(ws)).then(function (data) {
     if (!Array.isArray(data) || !data.length) return;
     _files = data.map(function (f) {
       return {
@@ -161,7 +166,8 @@ function createItem() {
   renderFiles(_files);
 
   var userId = parseInt(localStorage.getItem('dn_user_id'), 10) || 0;
-  apiPost('/files/', { filename: name, filepath: name, category: 'Personal', user_id: userId })
+  var ws = typeof getWorkspace === 'function' ? getWorkspace() : 'Work';
+  apiPost('/files/', { filename: name, filepath: name, category: ws, user_id: userId })
     .then(function (created) {
       if (created && created.id) newFile.id = created.id;
     })

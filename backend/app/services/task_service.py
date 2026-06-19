@@ -40,8 +40,10 @@ def get_task_by_id(db: Session, task_id: int, current_user):
 
 
 #Get all Tasks
-def get_tasks(db: Session, current_user):
+def get_tasks(db: Session, current_user, category=None):
     query = select(Task).where(Task.user_id == current_user.id)
+    if category:
+        query = query.where(Task.category == category)
     tasks = db.exec(query).all()
 
     logger.info("User %s fetched %s tasks", current_user.id, len(tasks))
