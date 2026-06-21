@@ -28,5 +28,5 @@ alembic/versions/__pycache__/
 Thumbs.db
 
 # Docker data
-.logs
-.volumes
+logs
+volumes
