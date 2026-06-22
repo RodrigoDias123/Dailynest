@@ -7,21 +7,21 @@ document.addEventListener("DOMContentLoaded", function () {
   function checkName(name) {
     const conditions = {
       min: name.length >= 3,
-      max: name.length <= 15,
+      max: name.length <= 100,
       number: count(name, /[0-9]/g) === 0,
       special: count(name, /[!@#$%^&*(),.?":{}|<>]/g) === 0
     };
 
     return {
       valid: Object.values(conditions).every(Boolean),
-      message: "Invalid name: 3–15 chars, no numbers or special symbols."
+      message: "Invalid name: 3–100 chars, no numbers or special symbols."
     };
   }
 
   function checkEmail(email) {
     const valid = /\S+@\S+\.\S+/;
-    const ok = email.length >= 5 && email.length <= 100 && valid.test(email);
-
+    const ok = email.length >= 7 && email.length <= 100 && valid.test(email);
+    
     return {
       valid: ok,
       message: "Invalid email format or too short."
@@ -90,3 +90,40 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
 });
+
+function handleLogin(e) {
+  e.preventDefault();
+
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const remember = document.querySelector('input[name="remember"]').checked;
+
+  if (remember) {
+    localStorage.setItem('remember_email', email);
+  } else {
+    localStorage.removeItem('remember_email');
+  }
+
+  apiPost('/auth/login', { email, password })
+    .then(data => {
+      localStorage.setItem('token', data.access_token);
+
+      return Promise.all([
+        apiGet('/users/profile'),
+        apiGet('/tasks'),
+        apiGet('/agendas'),
+        apiGet('/projects')
+      ]);
+    })
+    .then(([profile, tasks, agendas, projects]) => {
+      localStorage.setItem('user_id', profile.id);
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      localStorage.setItem('agendas', JSON.stringify(agendas));
+      localStorage.setItem('projects', JSON.stringify(projects));
+
+      window.location.href = 'tasks.html';
+    })
+    .catch(() => {
+      toast.error('Login failed. Check your credentials and try again.');
+    });
+}

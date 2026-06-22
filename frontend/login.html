@@ -103,49 +103,7 @@
 <script src="js/toast.js"></script>
 <script src="js/router.js"></script>
 <script src="js/api.js"></script>
+<script src="js/validations.js"></script>
 <script type="module" src="js/animations.js"></script>
-<script>
-  if (localStorage.getItem('dn_token')) {
-    window.location.replace('tasks.html');
-  }
-
-  (function loadRemembered() {
-    var savedEmail = localStorage.getItem('dn_remember_email');
-    var savedPwd   = localStorage.getItem('dn_remember_pwd');
-    if (savedEmail) {
-      document.getElementById('email').value    = savedEmail;
-      document.getElementById('password').value = savedPwd || '';
-      document.querySelector('input[name="remember"]').checked = true;
-    }
-  })();
-
-  function handleLogin(e) {
-    e.preventDefault();
-    var email    = document.getElementById('email').value.trim();
-    var password = document.getElementById('password').value;
-    var remember = document.querySelector('input[name="remember"]').checked;
-
-    if (remember) {
-      localStorage.setItem('dn_remember_email', email);
-      localStorage.setItem('dn_remember_pwd',   password);
-    } else {
-      localStorage.removeItem('dn_remember_email');
-      localStorage.removeItem('dn_remember_pwd');
-    }
-
-    apiPost('/auth/login', { email: email, password: password })
-      .then(function (data) {
-        localStorage.setItem('dn_token', data.access_token);
-        return apiGet('/users/profile');
-      })
-      .then(function (profile) {
-        localStorage.setItem('dn_user_id', profile.id);
-        window.location.href = 'tasks.html';
-      })
-      .catch(function () {
-        toast.error('Login failed. Check your credentials and try again.');
-      });
-  }
-</script>
 </body>
 </html>
