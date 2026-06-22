@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, SQLModel, Relationship
 
@@ -9,7 +10,7 @@ class Agenda(SQLModel, table=True):
     __tablename__ = "agendas"
     
     id: Optional[int] = Field(default=None, primary_key=True)
-    date: str = Field(index=True)
+    date: datetime = Field(index=True)
     event: str = Field(index=True, max_length=100)
     category: str = Field(default="Personal", max_length=50)
     

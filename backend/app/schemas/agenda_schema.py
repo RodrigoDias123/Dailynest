@@ -1,9 +1,10 @@
+from datetime import datetime
 from typing import Optional
 from sqlmodel import SQLModel
 
 
 class AgendaBase(SQLModel):
-    date: str
+    date: datetime
     event: str
     category: str = "Personal"
 
@@ -11,7 +12,7 @@ class AgendaCreate(AgendaBase):
     user_id: int
 
 class AgendaUpdate(SQLModel):
-    date: Optional[str] = None
+    date: Optional[datetime] = None
     event: Optional[str] = None
     category: Optional[str] = None
 
