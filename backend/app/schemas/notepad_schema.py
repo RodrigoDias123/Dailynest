@@ -8,7 +8,7 @@ class NotepadBase(SQLModel):
     category: str = "Personal"
 
 class NotepadCreate(NotepadBase):
-    user_id: int
+    pass
 
 class NotepadUpdate(SQLModel):
     title: Optional[str] = None
