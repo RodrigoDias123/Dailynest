@@ -1,9 +1,8 @@
 from typing import Optional
 from sqlmodel import SQLModel
-from pydantic import BaseModel
 
 
-class TaskBase(BaseModel):
+class TaskBase(SQLModel):
     title: str
     description: Optional[str] = None
     category: str = "Personal"
@@ -23,6 +22,3 @@ class TaskUpdate(SQLModel):
 class TaskPublic(TaskBase):
     id: int
     user_id: int
-    user: Optional["UserPublic"] = None
-
-from app.schemas.user_schema import UserPublic

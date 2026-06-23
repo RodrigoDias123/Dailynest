@@ -1,6 +1,5 @@
 from typing import Optional
 from sqlmodel import SQLModel
-from pydantic import BaseModel
 
 #User
 #shared fields used by multiple user schemas
@@ -19,7 +18,7 @@ class UserUpdate(SQLModel):
     password: Optional[str] = None
 
 #ASafe user representation returned by the API
-class UserPublic(BaseModel):
+class UserPublic(SQLModel):
     id: int
     name: str
     email: str
