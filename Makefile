@@ -1,4 +1,7 @@
-build:
+.env:
+	cp .env.example .env
+
+build:.env
 	docker compose build
 
 start: build
