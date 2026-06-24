@@ -267,7 +267,7 @@ function deleteNote() {
   renderNoteList();
 
   apiDelete('/notepads/' + idToDelete)
-    .then(function ()  { toast.success('Note deleted.'); })
+    .then(function ()  { toast.error('Note deleted.'); })
     .catch(function () { toast.error('Failed to delete note.'); });
 }
 
