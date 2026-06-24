@@ -6,7 +6,6 @@ __pycache__/
 
 # Environment
 .env
-.env.example
 
 # Virtual environments
 venv/
@@ -27,11 +26,6 @@ alembic/versions/__pycache__/
 .DS_Store
 Thumbs.db
 
-# Logs
-logs/
-
-# Docker volumes (runtime data — pgadmin DB, sessions, etc.)
-volumes/
-
-# Env files
-.env.example
+# Docker data
+logs
+volumes
