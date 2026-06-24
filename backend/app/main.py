@@ -25,7 +25,7 @@ app.add_middleware(
 # Health check endpoint
 @app.get("/")
 def read_root():
-    return {"message": "Working!!!"}
+    return {"message": "Working"}
 
 # Include all routers
 app.include_router(auth_router)
