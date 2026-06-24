@@ -28,6 +28,7 @@
       key: 'files',
       href: 'files.html',
       label: 'Files',
+      hidden: true,
       svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>'
     }
   ];
@@ -64,7 +65,7 @@
     connectedCallback() {
       var active = this.getAttribute('active') || detectActivePage();
 
-      var navLinks = NAV_LINKS.map(function (link) {
+      var navLinks = NAV_LINKS.filter(function (link) { return !link.hidden; }).map(function (link) {
         var badge = (link.key === 'files') ? '<span class="nav-badge" id="navBadge">0</span>' : '';
         return (
           '<a href="' + link.href + '" class="nav-link' + (active === link.key ? ' active' : '') + '">' +

@@ -263,7 +263,7 @@ function deleteTask(btn) {
     }
     row.remove();
     updateStatCards();
-    toast.success('Task deleted.');
+    toast.error('Task deleted.');
   }, { title: 'Delete Task', confirmLabel: 'Delete' });
 }
 

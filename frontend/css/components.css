@@ -473,8 +473,9 @@
 .dn-toast-success .dn-toast-icon     { color: #16a34a; }
 .dn-toast-success .dn-toast-progress { background: #16a34a; }
 
-.dn-toast-error { border-left: 3px solid #dc2626; }
+.dn-toast-error { border-left: 3px solid #dc2626; background: #fef2f2; }
 .dn-toast-error .dn-toast-icon     { color: #dc2626; }
+.dn-toast-error .dn-toast-msg      { color: #991b1b; }
 .dn-toast-error .dn-toast-progress { background: #dc2626; }
 
 .dn-toast-warning { border-left: 3px solid #ea580c; }

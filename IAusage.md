@@ -3,6 +3,8 @@
 Registo de uso de IA no desenvolvimento do projecto DailyNest.
 
 ---
+## Frontend — Uso de IA
+---
 
 ## Task #01 — Frontend UI: Layout & All Pages
 
@@ -779,3 +781,63 @@ O toggle Work/Personal no sidebar apenas alterava o estilo visual dos pills (cla
 - [x] Sem alterações visuais — o CSS é exactamente o mesmo, apenas movido de ficheiro
 - [x] Permissões do ficheiro corrigidas (o `sed -i` criara o ficheiro com 0400; recriado com 0644 via Python para o Nginx conseguir ler)
 
+---
+
+## Backend — Uso de IA
+
+### Project Overview and AI Integration
+
+AI was primarily used as an auxiliary tool throughout the entire codebase, serving to better understand certain logic, navigate application flows, and debug errors.
+
+### Frontend and Backend Integration
+
+AI played a direct role in the code within the Docker Compose setup to connect the frontend and backend services. Although I initially needed assistance, I was able to successfully configure it by combining AI guidance with Stack Overflow resources.
+
+On the frontend, AI was heavily utilized within the JavaScript codebase to accelerate the understanding of existing code and to manipulate its functions effectively. It was used interchangeably to generate, correct, and explain code.
+
+### Core Architecture and Database Management
+
+AI was deeply integrated into the development of the core, models, schemas, services, and routers, as well as the Docker Compose file. It helped set up the database, configurations, and various other components.
+
+Additionally, AI helped me decide between using the VS Code PostgreSQL extension or pgAdmin. I ultimately chose pgAdmin because the VS Code extension was not working well for my workflow, making pgAdmin the better choice for the time being.
+
+The initial idea for working with PostgreSQL came from a TikTok video. From there, I began modifying the code to fit my specific tables. However, the implementation shown in the video did not scale well for multiple tables and complex relationships. To resolve this, I used AI to fix imports, correct endpoints, and resolve errors within the models and schemas.
+
+### Project Structure and Data Flow
+
+The AI suggested the following project structure:
+
+```
+project/
+│
+├── core/
+│   └── database.py        ← Engine, SessionLocal, Base
+│
+├── models/
+│   └── user.py            ← SQLAlchemy ORM models
+│
+├── schemas/
+│   └── user.py            ← Pydantic request/response models
+│
+├── services/
+│   ├── user_service.py    ← Business logic (uses CRUD)
+│
+└── routers/
+    └── user.py            ← API endpoints
+```
+
+### Execution Progression
+
+The correct data flow and request progression follow this sequence:
+
+```
+Router → Schema (Validation) → Service (Queries) → Model (Structure) → Database
+```
+
+### Reference Material and Resources
+
+The following documentation and Stack Overflow resources were utilized during development to address specific configuration and validation requirements:
+
+- Multiple Dockerfile configs — https://stackoverflow.com/questions/27409761/docker-multiple-dockerfiles-in-project
+- Register validations (password strength) — https://stackoverflow.com/questions/5142103/regex-to-validate-password-strength
+- Register validations (email) — https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript

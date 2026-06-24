@@ -352,11 +352,14 @@ function rebuildViews() {
 
 /* ── Map backend agenda to frontend event format ─────────── */
 function agendaToEvent(a) {
+  var dt       = a.date || '';
+  var dateOnly = dt.slice(0, 10);
+  var timePart = dt.length >= 16 ? dt.slice(11, 16) : '09:00';
   return {
     id:          a.id,
     title:       a.event,
-    start_date:  a.date + 'T00:00:00',
-    end_date:    a.date + 'T01:00:00',
+    start_date:  dateOnly + 'T' + timePart + ':00',
+    end_date:    dateOnly + 'T' + timePart + ':00',
     description: ''
   };
 }
@@ -389,23 +392,28 @@ function openEventModal(mode, eventId) {
   var form     = document.getElementById('eventForm');
   if (form) form.reset();
 
+  var deleteBtn = document.getElementById('deleteEventBtn');
   if (mode === 'edit' && eventId != null) {
     var ev = EVENTS.filter(function (e) { return e.id === eventId; })[0];
     if (!ev) return;
     _editingEventId = eventId;
-    if (titleEl)  titleEl.textContent  = 'Edit Event';
-    if (submitEl) submitEl.textContent = 'Save Changes';
+    if (titleEl)   titleEl.textContent     = 'Edit Event';
+    if (submitEl)  submitEl.textContent    = 'Save Changes';
+    if (deleteBtn) deleteBtn.style.display = '';
     var titleInput = document.getElementById('eventTitle');
     var descInput  = document.getElementById('eventDescription');
     var startInput = document.getElementById('eventStartDate');
+    var timeInput  = document.getElementById('eventStartTime');
     var endInput   = document.getElementById('eventEndDate');
-    if (titleInput) titleInput.value = ev.title        || '';
-    if (descInput)  descInput.value  = ev.description  || '';
-    if (startInput) startInput.value = ev.start_date ? ev.start_date.slice(0, 16) : '';
+    if (titleInput) titleInput.value = ev.title       || '';
+    if (descInput)  descInput.value  = ev.description || '';
+    if (startInput) startInput.value = ev.start_date ? ev.start_date.slice(0, 10) : '';
+    if (timeInput)  timeInput.value  = ev.start_date ? ev.start_date.slice(11, 16) : '';
     if (endInput)   endInput.value   = ev.end_date   ? ev.end_date.slice(0, 16)   : '';
   } else {
-    if (titleEl)  titleEl.textContent  = 'New Event';
-    if (submitEl) submitEl.textContent = 'Create Event';
+    if (titleEl)   titleEl.textContent     = 'New Event';
+    if (submitEl)  submitEl.textContent    = 'Create Event';
+    if (deleteBtn) deleteBtn.style.display = 'none';
   }
   openModal('createEvent');
 }
@@ -414,15 +422,36 @@ function closeEventModal() {
   closeModal('createEvent');
 }
 
+/* ── Delete event ────────────────────────────────────────── */
+function deleteEvent() {
+  if (_editingEventId == null) return;
+  var idToDelete = _editingEventId;
+  toast.confirm('This event will be permanently removed.', function () {
+    EVENTS = EVENTS.filter(function (e) { return e.id !== idToDelete; });
+    closeEventModal();
+    rebuildViews();
+    renderUpcomingPanel();
+    if (selectedDay) {
+      var panel = document.getElementById('day-events-panel');
+      if (panel && panel.style.display !== 'none') selectDay(selectedDay, new Date(selectedDay));
+    }
+    toast.error('Event deleted.');
+    apiDelete('/agendas/' + idToDelete).catch(function () {
+      toast.error('Failed to delete event. Please try again.');
+    });
+  }, { title: 'Delete event?', confirmLabel: 'Delete', confirmCls: 'btn-danger' });
+}
+
 /* ── Submit event form (create or edit) ──────────────────── */
 function submitEventForm(e) {
   e.preventDefault();
-  var title     = (document.getElementById('eventTitle')       || {}).value || '';
-  var desc      = (document.getElementById('eventDescription') || {}).value || '';
-  var startDate = (document.getElementById('eventStartDate')   || {}).value || '';
-  var endDate   = (document.getElementById('eventEndDate')     || {}).value || '';
+  var title      = (document.getElementById('eventTitle')       || {}).value || '';
+  var desc       = (document.getElementById('eventDescription') || {}).value || '';
+  var startDate  = (document.getElementById('eventStartDate')   || {}).value || '';
+  var startTime  = (document.getElementById('eventStartTime')   || {}).value || '09:00';
+  var startNorm  = startDate ? (startDate + 'T' + startTime + ':00') : '';
 
-  if (!title || !startDate || !endDate) return;
+  if (!title || !startDate || !startTime) return;
 
   // ── Apply locally first (synchronous) ──────────────────
   if (_editingEventId != null) {
@@ -430,14 +459,14 @@ function submitEventForm(e) {
       if (EVENTS[i].id === _editingEventId) {
         EVENTS[i].title       = title;
         EVENTS[i].description = desc;
-        EVENTS[i].start_date  = startDate;
-        EVENTS[i].end_date    = endDate;
+        EVENTS[i].start_date  = startNorm;
+        EVENTS[i].end_date    = startNorm;
         break;
       }
     }
   } else {
     var newId = EVENTS.reduce(function (max, ev) { return Math.max(max, ev.id || 0); }, 0) + 1;
-    EVENTS.push({ id: newId, title: title, description: desc, start_date: startDate, end_date: endDate });
+    EVENTS.push({ id: newId, title: title, description: desc, start_date: startNorm, end_date: startNorm });
   }
 
   var wasEditing = _editingEventId != null;
@@ -451,8 +480,7 @@ function submitEventForm(e) {
   toast.success(wasEditing ? 'Event updated.' : 'Event created.');
 
   // ── Sync to API in background ───────────────────────────
-  var dateOnly = startDate ? startDate.slice(0, 10) : '';
-  var apiPayload = { event: title, date: dateOnly, category: typeof getWorkspace === 'function' ? getWorkspace() : 'Work' };
+  var apiPayload = { event: title, date: startNorm, category: typeof getWorkspace === 'function' ? getWorkspace() : 'Work' };
   if (_editingEventId != null) {
     apiPatch('/agendas/' + _editingEventId, apiPayload).catch(function () {});
   } else {
