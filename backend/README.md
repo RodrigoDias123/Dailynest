@@ -12,7 +12,6 @@ REST API built with **FastAPI** and **Python 3.12**, using **SQLModel** as the O
 | FastAPI         | ≥ 0.111   | Web framework                  |
 | Uvicorn         | ≥ 0.29    | ASGI server                    |
 | SQLModel        | 0.0.16    | ORM (SQLAlchemy + Pydantic)    |
-| Alembic         | ≥ 1.13    | Database migrations            |
 | psycopg         | ≥ 3.1     | PostgreSQL driver              |
 | PyJWT           | ≥ 2.8     | JWT token generation/validation|
 | passlib/bcrypt  | —         | Password hashing               |
